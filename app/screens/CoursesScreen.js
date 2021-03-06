@@ -23,6 +23,13 @@ export default function CoursesScreen( {navigation} ){
                     navigation.navigate('CoursePlanner')
                 }}
             />
+
+            <Button
+                title="Add Class"
+                onPress={() => {
+                    navigation.navigate('EditCourses')
+                }}
+            />
         </View>
     )
 }

@@ -8,6 +8,7 @@ import MainScreen from './app/screens/MainScreen.js';
 import AccountScreen from './app/screens/AccountScreen.js';
 import CoursePlannerScreen from './app/screens/CoursePlannerScreen.js';
 import CoursesScreen from './app/screens/CoursesScreen.js';
+import EditCourses from './app/screens/EditCourses';
 import FlashcardsScreen from './app/screens/FlashcardsScreen.js';
 
 const Stack = createStackNavigator();
@@ -41,6 +42,11 @@ export default function App() {
           name="Courses"
           component={CoursesScreen}
         />
+        <Stack.Screen
+          name="EditCourses"
+          component={EditCourses}
+        />
+          
         <Stack.Screen 
           name="CoursePlanner"
           component={CoursePlannerScreen}
