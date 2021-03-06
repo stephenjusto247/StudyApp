@@ -1,44 +1,33 @@
+
 import React from 'react';
-import { StyleSheet, Text, View, Button, SafeAreaView } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AccountScreen from './AccountScreen.js';
+import FlashcardsScreen from './FlashcardsScreen.js';
+import CoursesScreen from './CoursesScreen.js';
+import CoursePlannerScreen from './CoursePlannerScreen.js';
+import CoursePlannerStack from './CoursePlannerStack.js';
 
-export default function MainScreen( {navigation} ){
+const Tab = createBottomTabNavigator();
+
+export default function MainScreen(){
     return(
-        <View style={styles.container}>
-            <Button 
-                title="Acc"
-                onPress={() => {
-                    navigation.navigate('Account')
-                }}
+        <Tab.Navigator>
+            <Tab.Screen
+                name='Acc'
+                component={AccountScreen}
             />
-            <Button 
-                title="FC"
-                onPress={() => {
-                    navigation.navigate('Flashcards')
-                }}
+            <Tab.Screen
+                name='FC'
+                component={FlashcardsScreen}
             />
-            <Button 
-                title="CS"
-                onPress={() => {
-                    navigation.navigate('Courses')
-                }}
+            <Tab.Screen
+                name='CS'
+                component={CoursesScreen}
             />
-            <Button 
-                title="CP"
-                onPress={() => {
-                    navigation.navigate('CoursePlanner')
-                }}
+            <Tab.Screen
+                name='CP'
+                component={CoursePlannerStack}
             />
-        </View>
-    )
+        </Tab.Navigator>
+    );
 }
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      alignItems: 'flex-end',
-      bottom: 50
-    },
-});
