@@ -3,10 +3,9 @@ import { StyleSheet, Text, View, StatusBar, TouchableOpacity, TextInput } from '
 import { LinearGradient } from 'expo-linear-gradient';
 import colors from '../config/colors.js';
 
-export default function LoginScreen( {navigation} ){
+export default function LoginScreen({navigation}){
     const [usernameInput, setUsernameInput] = React.useState('');
     const [passwordInput, setPasswordInput] = React.useState('');
-
     return(
         <View style={styles.container}>
             <StatusBar barStyle='dark-content'/>
