@@ -4,7 +4,6 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 export default function CoursesScreen( {navigation} ){
     return(
         <View style={styles.container}>
-
         </View>
     )
 }
