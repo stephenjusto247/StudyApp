@@ -5,6 +5,7 @@ export default function SignUpScreen( {navigation} ){
     return(
         <View style={styles.container}>
             <Text>SignUpScreen</Text>
+            <Text onPress={()=>{navigation.navigate('Login')}}>Back</Text>
         </View>
     )
 }

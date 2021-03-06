@@ -1,5 +1,6 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
+
 
 export default function FlashcardScreen(props) {
   const [flashcards, setFlashcards] = React.useState([]);
@@ -9,43 +10,19 @@ export default function FlashcardScreen(props) {
       let flashcards_ = [...flashcards];
       flashcards_.push(props.route.params.flashcard);
       setFlashcards(flashcards_);
-      //console.log(flashcards_);
     }
   }, [props.route.params]);
 
   return (
-    <Fragment>
-      <View style={styles.container}>
-        <Text>Flash Cards Groups</Text>
-        <Button
-          title="Make new cards"
-          onPress={() => {
-            props.navigation.navigate("FlashCards");
-          }}
-        />
-      </View>
-      <View style={styles.container}>
-        <Button
-          title="Acc"
-          onPress={() => {
-            props.navigation.navigate("Account");
-          }}
-        />
-        <Button
-          title="FC"
-          onPress={() => {
-            props.navigation.navigate("Flashcards");
-          }}
-        />
-        <Button
-          title="CS"
-          onPress={() => {
-            props.navigation.navigate("Courses");
-          }}
-        />
-        <Button title="CP" />
-      </View>
-    </Fragment>
+    <View style={styles.container}>
+      <Text>Flash Cards Groups</Text>
+      <Button
+        title="Make new cards"
+        onPress={() => {
+          props.navigation.navigate('AddFlashcards')
+        }}
+      />
+    </View>
   );
 }
 
