@@ -1,9 +1,6 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, View, Button, ScrollView, TouchableOpacity } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
 import colors from '../config/colors.js';
-
-const Stack = createStackNavigator();
 
 export default function CoursePlannerScreen( props ){
     const [courseEntries, setCourseEntries] = React.useState([]);
