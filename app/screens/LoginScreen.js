@@ -1,61 +1,64 @@
 import React from 'react';
-import { StyleSheet, Text, View, StatusBar, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Keyboard, Text, View, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import colors from '../config/colors.js';
 
 export default function LoginScreen({navigation}){
     const [usernameInput, setUsernameInput] = React.useState('');
     const [passwordInput, setPasswordInput] = React.useState('');
+
     return(
-        <View style={styles.container}>
-            <StatusBar barStyle='dark-content'/>
-            <View style ={styles.headerSection}>
-                <Text style={styles.title}>StudyApp</Text>
-            </View>
-            <View style={styles.middleSection}>
-                <TextInput 
-                    style={styles.textInput}
-                    onChangeText={text => setUsernameInput(text)}
-                    value={usernameInput}
-                    autoCompleteType='username'
-                    autoCorrect={false}
-                    keyboardAppearance='dark'
-                    placeholder='Username'
-                    textContentType='username'
-                />
-                <TextInput 
-                    style={styles.textInput}
-                    onChangeText={text => setPasswordInput(text)}
-                    value={passwordInput}
-                    autoCompleteType='password'
-                    autoCorrect={false}
-                    keyboardAppearance='dark'
-                    placeholder='Password'
-                    secureTextEntry={true}
-                    textContentType='password'
-                />
-                <TouchableOpacity
-                    style={styles.loginButton}
-                    onPress={() => {
-                        navigation.navigate('Main')
-                    }}
-                >
-                    <Text style={styles.loginButtonText}>Login</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.bottomSection}>
-                <LinearGradient start={{x: .5, y: 1}} end={{x: .5, y: 0}} colors={['#c7a9c2', '#fff']} style={styles.linearGradient}>
-                    <Text 
-                        style={styles.signupText}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.container}>
+                <StatusBar barStyle='dark-content'/>
+                <View style ={styles.headerSection}>
+                    <Text style={styles.title}>StudyApp</Text>
+                </View>
+                <View style={styles.middleSection}>
+                    <TextInput 
+                        style={styles.textInput}
+                        onChangeText={text => setUsernameInput(text)}
+                        value={usernameInput}
+                        autoCompleteType='username'
+                        autoCorrect={false}
+                        keyboardAppearance='dark'
+                        placeholder='Username'
+                        textContentType='username'
+                    />
+                    <TextInput 
+                        style={styles.textInput}
+                        onChangeText={text => setPasswordInput(text)}
+                        value={passwordInput}
+                        autoCompleteType='password'
+                        autoCorrect={false}
+                        keyboardAppearance='dark'
+                        placeholder='Password'
+                        secureTextEntry={true}
+                        textContentType='password'
+                    />
+                    <TouchableOpacity
+                        style={styles.loginButton}
                         onPress={() => {
-                            navigation.navigate('Signup')
+                            navigation.navigate('Main')
                         }}
                     >
-                        Signup
-                    </Text>
-                </LinearGradient>
+                        <Text style={styles.loginButtonText}>Login</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.bottomSection}>
+                    <LinearGradient start={{x: .5, y: 1}} end={{x: .5, y: 0}} colors={['#c7a9c2', '#fff']} style={styles.linearGradient}>
+                        <Text 
+                            style={styles.signupText}
+                            onPress={() => {
+                                navigation.navigate('Signup')
+                            }}
+                        >
+                            Signup
+                        </Text>
+                    </LinearGradient>
+                </View>
             </View>
-        </View>
+        </TouchableWithoutFeedback>
     )
 }
 
