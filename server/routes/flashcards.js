@@ -1,8 +1,38 @@
 const router = require('express').Router();
 const FlashcardSet = require('../models/FlashcardSet');
 const User = require('../models/User');
-const { createFlashcardSetValidation, updateFlashcardSetValidation, deleteFlashcardSetValidation,updateFlashcardValidation, deleteFlashcardValidation, addFlashcardValidation } = require('../lib/validation');
+const { createFlashcardSetValidation, addUserSetslashcardSetValidation, updateFlashcardSetValidation, deleteFlashcardSetValidation,updateFlashcardValidation, deleteFlashcardValidation, addFlashcardValidation } = require('../lib/validation');
 const verify = require('../lib/verify');
+
+router.post('/add-user-sets', verify, async (req, res) => {
+
+  // Validate request body
+  const {error} = addUserSetslashcardSetValidation(req.body);
+  if(error) return res.status(400).json({ message: error.details[0].message });
+
+  try{
+    await Promise.all(req.user.flashcardSets.map(async (id) => {
+      await FlashcardSet.deleteOne({ _id: id });
+    }));
+
+    const ids = await Promise.all(req.body.sets.map(async (set) => {
+      let flashcardset = new FlashcardSet(set);
+      let newFlashcardSet = await flashcardset.save();
+      return newFlashcardSet._id;
+    }))
+
+    console.log(ids)
+
+    // Connect flashcard sets to user
+    const query = { _id: req.user._id };
+    const set = { $set: { flashcardSets: ids } };
+    await User.updateOne(query, set);
+
+    return res.status(201).json({ message: "Success"});
+  } catch {
+    return res.status(500).json({ message: 'Failed to save flashcard set' })
+  }
+});
 
 router.post('/create-set', verify, async (req, res) => {
 

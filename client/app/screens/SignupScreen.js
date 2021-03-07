@@ -9,11 +9,7 @@ import colors from '../config/colors.js';
 export default function SignUpScreen( {navigation} ){
     const [fullNameInput, setFullNameInput] = React.useState('');
     const [universityNameInput, setUniversityNameInput] = React.useState('');
-<<<<<<< HEAD
-    const [emailInput, setemailInput] = React.useState('');
-=======
     const [emailInput, setEmailInput] = React.useState('');
->>>>>>> 930094b7147d705b4244cf90883e6717cee3d724
     const [passwordInput, setPasswordInput] = React.useState('');
 
     async function handleSubmit(){
@@ -70,20 +66,12 @@ export default function SignUpScreen( {navigation} ){
                     />
                     <TextInput 
                         style={styles.textInput}
-<<<<<<< HEAD
-                        onChangeText={text => setemailInput(text)}
-=======
                         onChangeText={text => setEmailInput(text)}
->>>>>>> 930094b7147d705b4244cf90883e6717cee3d724
                         value={emailInput}
                         autoCompleteType='email'
                         autoCorrect={false}
                         keyboardAppearance='dark'
-<<<<<<< HEAD
-                        placeholder='email'
-=======
                         placeholder='Email'
->>>>>>> 930094b7147d705b4244cf90883e6717cee3d724
                         textContentType='emailAddress'
                     />
                     <TextInput 
