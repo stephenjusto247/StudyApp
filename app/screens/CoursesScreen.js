@@ -6,20 +6,35 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 export default function CoursesScreen( props ){
     const [courses, setCourses] = React.useState([]);
     const[reminderEnabled, setReminder] = React.useState(false);
+    const [indexToDelete, setIndexToDelete] = React.useState(0);
+    const [indexToChangeRemind, setIndexToChangeRemind] = React.useState(false);
 
     React.useEffect(()=>{
-        console.log(props.route.params);
         if (props.route.params){
-            let courses_ = [...courses];
-            const newEntry = {
-                name: props.route.params.name,
-                reminder: props.route.params.reminder,
-                days: props.route.params.days,
-                hour: props.route.params.hour,
-                min: props.route.params.min,
-            };
-            courses_.push(newEntry);
-            setCourses([...courses_]);
+            if(props.route.params.index === undefined){
+                let courses_ = [...courses];
+                const newEntry = {
+                    name: props.route.params.name,
+                    reminder: props.route.params.reminder,
+                    days: props.route.params.days,
+                    hour: props.route.params.hour,
+                    min: props.route.params.min,
+                };
+                courses_.push(newEntry);
+                setCourses([...courses_]);
+            }
+            else{
+                let courses_ = [...courses];
+                const newEntry = {
+                    name: props.route.params.name,
+                    reminder: props.route.params.reminder,
+                    days: props.route.params.days,
+                    hour: props.route.params.hour,
+                    min: props.route.params.min,
+                };
+                courses_.splice(props.route.index, 1, newEntry);
+                setCourses([...courses_]);
+            }
         }
     }, [props.route.params]);
 
@@ -27,6 +42,16 @@ export default function CoursesScreen( props ){
         if(reminderEnabled === true){
 
         }
+    }
+
+    function changeRemind(){
+        let courses_ = [...courses];
+        let courseCopy = courses_[indexToChangeRemind];
+        let prevState = courseCopy.reminder;
+        courseCopy.reminder = !prevState;
+        console.log(courseCopy);
+        courses_.splice(indexToChangeRemind, 1, courseCopy);
+        setCourses(courses_);
     }
 
     function deleteCourseWarning(){
@@ -49,10 +74,12 @@ export default function CoursesScreen( props ){
     }
 
     function deleteCourse(){
-        
+        let courses_ = [...courses];
+        courses_.splice(indexToDelete, 1);
+        setCourses(courses_);
     }
 
-    return( 
+    return(
         <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>
@@ -66,11 +93,14 @@ export default function CoursesScreen( props ){
                 </TouchableOpacity>   
             </View>
             <View style={styles.courseList}>
-                {courses.map((entry, index) =>(
-                    <View style={styles.courses} key={index}>
+                {courses.map((entry, index_) =>(
+                    <View style={styles.courses} key={index_}>
                         <View style={styles.courseReminder}>
                             <Switch 
-                                onValueChange={() => setReminder(entry.reminder)}
+                                onValueChange={() => {
+                                    setIndexToChangeRemind(index_);
+                                    changeRemind();
+                                }}
                                 value={entry.reminder} 
                             />
                         </View>
@@ -81,7 +111,13 @@ export default function CoursesScreen( props ){
                         </View>
                         <View style={styles.courseDays}>
                             <Text>
-                                {entry.days}
+                                {entry.days.map((entry, index)=>(
+                                    <View style={styles.days} key={index}>
+                                        <Text>
+                                            {entry}
+                                        </Text>
+                                    </View>
+                                ))}
                             </Text>
                         </View>
                         <View style={styles.courseTime}>
@@ -89,17 +125,34 @@ export default function CoursesScreen( props ){
                                 {entry.hour}:{entry.min}
                             </Text>   
                         </View>
-                        <View>
-                        <TouchableOpacity>
+                        <View style={styles.buttons}>
+                            <TouchableOpacity onPress={()=>{
+                                const entryToEdit = {
+                                    name: entry.name,
+                                    reminder: entry.reminder,
+                                    days: entry.days,
+                                    hour: entry.hour,
+                                    min: entry.min,
+                                    index: index_
+                                };  
+                                    props.navigation.navigate('EditCourses', entryToEdit);
+                                }}>
+                                <Text style={styles.editText}>
+                                    Edit
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
                             <Icon
                             name='remove' 
-                            onPress={deleteCourseWarning}
-                            size={20} 
+                            onPress={() => {
+                                setIndexToDelete(index_);
+                                deleteCourseWarning();
+                            }}
+                            size={25} 
                             color='firebrick'
                             />
-                        </TouchableOpacity>
+                            </TouchableOpacity>
                         </View>
-
                     </View>
                 ))}        
             </View>
@@ -128,7 +181,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         alignSelf: 'center',
     },
-
     courseList: {
         flex: 1,
         backgroundColor: colors.bone,
@@ -143,23 +195,28 @@ const styles = StyleSheet.create({
     courseReminder: {
         flex: .25,
         justifyContent: 'center',
+        paddingLeft: 5,
     },
     courseName: {
-        flex: .75,
+        flex: .25,
         justifyContent: 'center',
     },
     courseDays: {
-        flex: .25,
-        flexWrap:'wrap',
+        flex: .26,
         justifyContent: 'center',  
         alignItems: 'flex-start'
-
+    },
+    days: {
+        flexDirection: 'row'
     },
     courseTime: {
         flex: .25,
-        flexWrap:'wrap',
-
         justifyContent: 'center',
-        alignItems: 'flex-start'
+    },
+    buttons: {
+        paddingRight: 25
+    },
+    editText: {
+        fontWeight: 'bold'
     },
 });

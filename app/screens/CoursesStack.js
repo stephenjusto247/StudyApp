@@ -1,20 +1,20 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CoursesScreen from './CoursesScreen.js';
-import EditCourses from './EditCourses';
+import EditCourses from './EditCourses.js';
 
 const Stack = createStackNavigator();
 
-export default function CourseScreenStack( {navigation} ){
+export default function CoursesStack( props ){
 
     return(
         <Stack.Navigator>
-            <Stack.Screen
+            <Stack.Screen 
                 name='CoursesScreen'
                 component={CoursesScreen}
                 options={{headerShown: false}}
             />
-            <Stack.Screen
+            <Stack.Screen 
                 name='EditCourses'
                 component={EditCourses}
                 options={{headerShown: false}}

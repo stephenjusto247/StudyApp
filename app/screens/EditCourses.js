@@ -5,14 +5,37 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from '../config/colors.js';
 
 export default function EditCourses( props ){
+    const [mode, setMode] = React.useState(0);
     const [className, setClassName] = React.useState('');
-    const [hour, setHour] = React.useState();
-    const [min, setMin] = React.useState();
+    const [hour, setHour] = React.useState(-1);
+    const [min, setMin] = React.useState(-1);
     const[reminderEnabled, setReminderEnabled] = React.useState(false);
     const[selectedDays, setSelections] = React.useState([]);
-    const [timeTitle, setTimeTitle] = React.useState('Select Time');
+    const[index, setIndex] = React.useState(0);
 
+    const [timeTitle, setTimeTitle] = React.useState('Select Time');
     const [isTimePickerVisible, setTimePickerVisibility] = React.useState(false);
+
+    React.useEffect(()=>{
+        if (props.route.params){
+            setMode(1);
+            setClassName(props.route.params.name);
+            setReminderEnabled(props.route.params.reminder);
+            setSelections(props.route.params.days);
+            setHour(props.route.params.hour);
+            setMin(props.route.params.min);
+            setIndex(props.route.params.index);
+        }
+        else{
+            setMode(0);
+            setClassName('');
+            setReminderEnabled(false);
+            setSelections([]);
+            setHour(-1);
+            setMin(-1);
+        }
+    }, [props.route.params]);
+
     const showTimePicker = () => {
         setTimePickerVisibility(true);
     };
@@ -28,20 +51,36 @@ export default function EditCourses( props ){
         hideTimePicker();
     };
 
+    function handleAdd(){
+        if(className !== '' && hour !== -1 && selectedDays !== [undefined]){
+            const course = {
+                name: className,
+                reminder: reminderEnabled,
+                days: selectedDays.map(({value}) => value),
+                hour: hour,
+                min: min,
+            }
+            props.navigation.navigate('CoursesScreen', course);
+        }
+    }
+
+    function handleEdit(){
+        if(className !== '' && hour !== 0 && selectedDays !== [undefined]){
+            const course = {
+                name: className,
+                reminder: reminderEnabled,
+                days: selectedDays.map(({value}) => value),
+                hour: hour,
+                min: min,
+                index: index
+            }
+            props.navigation.navigate('CoursesScreen', course);
+        }
+    }
+
     const days =[
         'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
     ]
-
-    function handleSubmit(){
-        const course ={
-            name: className,
-            reminder: reminderEnabled,
-            days: selectedDays.map(({value}) => value),
-            hour: hour,
-            min: min,
-        }
-        props.navigation.navigate('CoursesScreen', course);
-    }
 
     return(
         <View style={styles.container}>
@@ -83,17 +122,26 @@ export default function EditCourses( props ){
                     selectedItems={selectedDays}
                     onSelectionsChange={selectedItems => setSelections(selectedItems)}
                 />
+            </View>
+            <View>
                 <TouchableOpacity
                     onPress={() => {props.navigation.navigate('CoursesScreen')}}
                 >
                     <Text>Back</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={handleSubmit}
-                >
-                    <Text>Submit</Text>
-                </TouchableOpacity>
+
+                {mode === 0 ? 
+                    <TouchableOpacity>
+                        <Text style={styles.button} onPress={handleAdd}>Add</Text>
+                    </TouchableOpacity>
+                    :
+                    <TouchableOpacity>
+                        <Text style={styles.button} onPress={handleEdit}>Edit</Text>
+                    </TouchableOpacity>
+                }
             </View>
+
+                
         </View>
     )
 }
