@@ -1,24 +1,42 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
 import colors from '../config/colors.js';
 
 export default function FlashcardsStack(props) {
+  const [test, setTest] = React.useState('l');
   const [flashcardSet, setFlashcardSet] = React.useState({});
+
   React.useEffect(() => {
     if (props.route.params) {
       if (props.route.params.delete){
-        
+        let flashcardSet_ = flashcardSet;
+        console.log('delete----------')
+        console.log(flashcardSet_);
+        console.log(flashcardSet_.flashcards[props.route.params.index]);
+        flashcardSet_.flashcards = [];
+        console.log(flashcardSet_);
+        setFlashcardSet(flashcardSet_);
+        setTest('delete');
+        props.route.params.delete = null;
       }
       else{
         const newFlashcard = {
           set: props.route.params.set,
           flashcards: props.route.params.flashcards
         };
+        console.log('pusshing-------')
         console.log(newFlashcard);
-        setFlashcardSet({...newFlashcard});
+        setFlashcardSet(newFlashcard);
+        setTest('add');
       }
     }
   }, [props.route.params]);
+
+  React.useEffect(()=>{
+    console.log('new-------');
+    console.log(test);
+    console.log(flashcardSet);
+  }, [test]);
 
   return (
     <View style={styles.container}>
@@ -30,7 +48,6 @@ export default function FlashcardsStack(props) {
       <ScrollView style={styles.mainSection}>
       {(flashcardSet.flashcards !== undefined) ? 
         flashcardSet.flashcards.map((entry, index) =>{
-          if (entry !== undefined){
             return(
               <TouchableOpacity key={index} onPress={()=>
                 props.navigation.navigate('FlashcardEdit', {
@@ -48,44 +65,82 @@ export default function FlashcardsStack(props) {
                 </View>
               </TouchableOpacity>
             )
-          } 
-          else return(
-            <Text>It looks empty here</Text>
-          )
-        }) : <Text>Empty</Text>
+        }) : <Text style={styles.empty}>It looks empty here</Text>
       }
       </ScrollView>
       <View style={styles.bottomSection}>
-        <Button
-          title="MakeFlashCards"
-          onPress={() => {
-            props.navigation.navigate("AddFlashcards", flashcardSet);
-          }}
-        />
-        <Button
-          title="Study"
-          onPress={() => {
-            props.navigation.navigate("FlashcardStudy", flashcardSet);
-          }}
-        />
-        <Button
-          title="Back"
+        <TouchableOpacity 
+          style={styles.back}
           onPress={() => {
             props.navigation.navigate("Flashcards", flashcardSet);
           }}
-        />
+        >
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.study}
+          onPress={() => {
+            props.navigation.navigate("FlashcardStudy", flashcardSet);
+          }}
+        >
+          <Text style={styles.studyText}>Study</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.create}
+          onPress={() => {
+            props.navigation.navigate("AddFlashcards", flashcardSet);
+          }}
+        >
+          <Text style={styles.createText}>Create</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  back: {
+    alignItems: 'center',
+    borderColor: colors.paleSilver,
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 45,
+    width: 100
+  },
+  backText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: colors.paleSilver
+  },
+  bottomSection: {
+    flex: .3333,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
   container: {
     flex: 1,
     paddingTop: '15%'
   },
-  bottomSection: {
-    flex: .3333
+  create:{
+    alignItems: 'center',
+    borderColor: colors.paleSilver,
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 45,
+    width: 100
+  },
+  createText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: colors.paleSilver
+  },
+  empty: {
+    fontSize: 16,
+    alignSelf: 'center'
   },
   flashcard: {
     flexDirection: 'row',
@@ -129,5 +184,20 @@ const styles = StyleSheet.create({
   },
   mainSection: {
     flex: .3333
+  },
+  study: {
+    alignItems: 'center',
+    borderColor: colors.paleSilver,
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 45,
+    width: 100
+  },
+  studyText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: colors.paleSilver
   }
 });

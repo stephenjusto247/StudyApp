@@ -15,6 +15,13 @@ export default function FlashcardEditScreen(props){
         }
     }, [props.route.params]);
 
+    function handleDelete(){
+        props.navigation.navigate('FlashcardSetScreen', {
+            index: props.route.params.index,
+            delete: true
+        })
+    }
+
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
@@ -55,7 +62,7 @@ export default function FlashcardEditScreen(props){
                     }}>
                         <Text style={styles.cancelText}>Cancel</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.delete}>
+                    <TouchableOpacity style={styles.delete} onPress={handleDelete}>
                         <Text style={styles.deleteText}>Delete</Text>
                     </TouchableOpacity>
                 </View>
