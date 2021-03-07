@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import colors from '../config/colors.js';
 
 export default function SignUpScreen( {navigation} ){
     return(
