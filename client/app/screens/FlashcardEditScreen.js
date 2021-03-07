@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, 
         TextInput, Keyboard, TouchableWithoutFeedback, 
         ScrollView, Dimensions } from 'react-native';
+import Dialog from 'react-native-dialog';
 import colors from '../config/colors.js';
 
 export default function FlashcardEditScreen(props){
+    const [dialogVisibility, setDialogVisiblity] = useState(false);
+    const [editVisibility, setEditVisibility] = useState(false);
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
 
@@ -15,7 +18,16 @@ export default function FlashcardEditScreen(props){
         }
     }, [props.route.params]);
 
+    function hideDialog(){
+        setDialogVisiblity(false);
+    }
+
+    function hideEdit(){
+        setEditVisiblity(false);
+    }
+
     function handleDelete(){
+        setDialogVisiblity(false);
         props.navigation.navigate('FlashcardSetScreen', {
             index: props.route.params.index,
             delete: true,
@@ -26,6 +38,7 @@ export default function FlashcardEditScreen(props){
     }
 
     function handleEdit(){
+        setEditVisibility(false);
         props.navigation.navigate('FlashcardSetScreen', {
             index: props.route.params.index,
             question: question,
@@ -77,13 +90,29 @@ export default function FlashcardEditScreen(props){
                     }}>
                         <Text style={styles.cancelText}>Cancel</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.edit} onPress={handleEdit}>
+                    <TouchableOpacity style={styles.edit} onPress={() => {
+                        setEditVisibility(true);
+                    }}>
                         <Text style={styles.editText}>Edit</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.delete} onPress={handleDelete}>
+                    <TouchableOpacity style={styles.delete} onPress={()=>{
+                        setDialogVisiblity(true);
+                    }}>
                         <Text style={styles.deleteText}>Delete</Text>
                     </TouchableOpacity>
                 </View>
+                <Dialog.Container visible={dialogVisibility}>
+                    <Dialog.Title>Delete Flashcard</Dialog.Title>
+                    <Dialog.Description>Are you sure you want to delete this flashcard?</Dialog.Description>
+                    <Dialog.Button label={'Cancel'} onPress={hideDialog}/>
+                    <Dialog.Button label={'Delete'} onPress={handleDelete}/>
+                </Dialog.Container>
+                <Dialog.Container visible={editVisibility}>
+                    <Dialog.Title>Edit Flashcard</Dialog.Title>
+                    <Dialog.Description>Are you sure you want to edit this flashcard?</Dialog.Description>
+                    <Dialog.Button label={'Cancel'} onPress={hideEdit}/>
+                    <Dialog.Button label={'Edit'} onPress={handleEdit}/>
+                </Dialog.Container>
             </View>
         </TouchableWithoutFeedback>
     )
@@ -117,7 +146,7 @@ const styles = StyleSheet.create({
     },
     delete: {
         alignItems: 'center',
-        borderColor: colors.paleSilver,
+        borderColor: colors.red,
         borderWidth: 2,
         borderRadius: 10,
         justifyContent: 'center',
@@ -129,7 +158,7 @@ const styles = StyleSheet.create({
     deleteText: {
         fontWeight: 'bold',
         fontSize: 18,
-        color: colors.paleSilver
+        color: colors.red
     },
     edit: {
         alignItems: 'center',

@@ -21,7 +21,7 @@ export default function FlashcardScreen(props) {
 
   useEffect(() => {
     if (props.route.params) {
-      //console.log(props.route.params);
+      console.log(props.route.params);
       if (props.route.params.deleteSet){
         if (flashcardSets.length > 0){
           setFlashcardSets(flashcardSets.filter((flashcardSet, index) => index !== props.route.params.setIndex));

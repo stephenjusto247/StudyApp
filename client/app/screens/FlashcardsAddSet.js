@@ -9,7 +9,8 @@ export default function FlashcardScreen(props) {
     if (flashcardSet != "") {
       const newFlashcardSet = {
         set: flashcardSet,
-        flashcards: [{}]
+        flashcards: [{}],
+        deleteSet: false
       };
       props.navigation.navigate("Flashcards", newFlashcardSet);
     }
