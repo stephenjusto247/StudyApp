@@ -1,10 +1,13 @@
 import React, {useState, useEffect, useRef} from "react";
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
+import Dialog from 'react-native-dialog';
 import colors from '../config/colors.js';
 
 export default function FlashcardsStack(props) {
+  const [dialogVisibility, setDialogVisiblity] = useState(false);
   const [lastAction, setLastAction] = useState('initial');
   const [flashcardSet, setFlashcardSet_] = useState({});
+  const [dialogPrompt, setDialogPrompt_] = useState('');
   const flashcardSetRef = useRef(flashcardSet);
   const setFlashcardSet = (data) => {
     flashcardSetRef.current = data;
@@ -12,8 +15,6 @@ export default function FlashcardsStack(props) {
   }
 
   useEffect(() => {
-    //console.log('in effect: ');
-    //console.log(props.route.params);
     if (props.route.params) {
       if (props.route.params.delete){
         setFlashcardSet({
@@ -41,6 +42,22 @@ export default function FlashcardsStack(props) {
       }
     }
   }, [props.route.params]);
+
+  function setDialogPrompt(set){
+    setDialogPrompt_('Are you sure you want to delete the "'+set+'" flashcard set?');
+  }
+
+  function hideDialog(){
+    setDialogVisiblity(false);
+  }
+
+  function handleDelete(){
+    setDialogVisiblity(false);
+    props.navigation.navigate('Flashcards', {
+      setIndex: props.route.params.setIndex,
+      deleteSet: true
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -112,15 +129,19 @@ export default function FlashcardsStack(props) {
       <View style={styles.deleteSection}>
         <TouchableOpacity 
           style={styles.delete}
-          onPress={() => {
-            props.navigation.navigate('Flashcards', {
-              setIndex: props.route.params.setIndex,
-              deleteSet: true
-          })
-        }}>
+          onPress={()=>{
+            setDialogPrompt(flashcardSetRef.current.set);
+            setDialogVisiblity(true);
+          }}>
           <Text style={styles.deleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
+      <Dialog.Container visible={dialogVisibility}>
+          <Dialog.Title>Delete Set</Dialog.Title>
+          <Dialog.Description>{dialogPrompt}</Dialog.Description>
+          <Dialog.Button label={'Cancel'} onPress={hideDialog}/>
+          <Dialog.Button label={'Delete'} onPress={handleDelete}/>
+      </Dialog.Container>
     </View>
   );
 }
