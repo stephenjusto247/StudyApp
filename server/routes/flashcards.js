@@ -32,7 +32,7 @@ router.post('/create-set', verify, async (req, res) => {
   }
 });
 
-router.post('/get-set', verify, async (req, res) => {
+router.post('/get-set', async (req, res) => {
 
   // Validate request body
   const {error} = deleteFlashcardSetValidation(req.body);
@@ -43,6 +43,28 @@ router.post('/get-set', verify, async (req, res) => {
     // Get all the flashcards from the set
     const flashcards = await FlashcardSet.findOne({ _id: req.body.setID })
       .then(response => response.flashcards);
+
+    return res.status(200).json({ flashcards: flashcards });
+  } catch {
+    return res.status(500).json({ message: 'Failed to get flashcard set' })
+  }
+});
+
+router.get('/get-set', async (req, res) => {
+
+  const data = req.query.setID || null;
+  // Validate request body
+  if(!data) return res.status(400).json({ message: "Missing argument" });
+
+  try{
+
+    // Get all the flashcards from the set
+    const flashcards = await FlashcardSet.findOne({ _id: data })
+      .then(response => response.flashcards.map(flashcard => {
+        let card = {question: flashcard.question, answer: flashcard.answer};
+        if(flashcard.hint) card.hint = flashcard.hint;
+        return card;
+      }));
 
     return res.status(200).json({ flashcards: flashcards });
   } catch {

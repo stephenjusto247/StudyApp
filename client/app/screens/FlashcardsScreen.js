@@ -1,87 +1,192 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+  StyleSheet, Text, View,
+  TouchableOpacity, ScrollView} from "react-native";
+import colors from '../config/colors.js';
 
 export default function FlashcardScreen(props) {
-  const [flashcardSet, setFlashcardSet] = React.useState([]);
-  React.useEffect(() => {
-    //console.log(props.route.params);
+  const [flashcardSets, setFlashcardSets_] = useState([]);
+  const flashcardSetsRef = useRef(flashcardSets);
+  const setFlashcardSets = (data) => {
+    flashcardSetsRef.current = data;
+    //console.log('in ref: ');
+    //console.log(data);
+    setFlashcardSets_(data);
+  }
+
+  useEffect(()=>{
+    readData();
+  }, []);
+
+  useEffect(() => {
     if (props.route.params) {
-      let flashcards_ = [...flashcardSet];
-      const newFlashcardSet = {
-        set: props.route.params.set,
-      };
-      flashcards_.push(newFlashcardSet);
-      setFlashcardSet([...flashcards_]);
+      //console.log(props.route.params);
+      if (props.route.params.deleteSet){
+        if (flashcardSets.length > 0){
+          setFlashcardSets(flashcardSets.filter((flashcardSet, index) => index !== props.route.params.setIndex));
+          storeData(flashcardSetsRef.current);
+        }
+        else{
+          const flashcardSet = []
+          setFlashcardSets(flashcardSet);
+          storeData(flashcardSet);
+        }
+      }
+      else if(props.route.params.lastAction === 'edit' || props.route.params.lastAction === 'delete'){
+        let flashcardSets_ = [...flashcardSets];
+        //console.log('in edit......');
+        //console.log('new is : ')
+        //console.log(props.route.params.flashcards);
+        for (let i = 0; i < flashcardSets_.length; i++){
+          if (flashcardSets_[i].set === props.route.params.set){
+            flashcardSets_[i].flashcards = props.route.params.flashcards;
+            console.log('so ...');
+            console.log(flashcardSets_[i].flashcards);
+            console.log('and');
+            console.log(flashcardSets_[i]);
+            break;
+          }
+        }
+        setFlashcardSets(flashcardSets_);
+        storeData(flashcardSets_);
+      }
+      else{
+        if (flashcardSets.length > 0){
+          let index = 0;
+          let flashcardSets_ = [...flashcardSets];
+          let newFlashcardSet = true;
+          const flashcardSet = {
+            set: props.route.params.set,
+            flashcards: props.route.params.flashcards
+          };
+          for (let i = 0; i < flashcardSets_.length; i++){
+            index = i;
+            if (flashcardSets_[i].set === flashcardSet.set){
+              flashcardSets_[i].flashcards = props.route.params.flashcards;
+              newFlashcardSet = false;
+              break;
+            }
+          }
+          if (newFlashcardSet) {
+            flashcardSet.flashcards = [];
+            flashcardSets_.push(flashcardSet);
+          }
+          setFlashcardSets([...flashcardSets_]);
+          storeData(flashcardSetsRef.current);
+        }
+        else{
+          let newFlashcardSet = {
+            set: props.route.params.set,
+            flashcards: props.route.params.flashcards,
+            index: 0
+          }
+          newFlashcardSet.flashcards = [];
+          setFlashcardSets([newFlashcardSet]);
+          storeData([newFlashcardSet]);
+        }
+      }
     }
   }, [props.route.params]);
 
+  async function storeData(value){
+    try{
+      const serializedValue = JSON.stringify(value);
+      await AsyncStorage.setItem('flashcardsScreen', serializedValue);
+    } catch(e){
+      console.log(e);
+    }
+  }
+
+  async function readData(){
+    let data;
+    try{
+      data = await AsyncStorage.getItem('flashcardsScreen');
+    } catch(e){
+      console.log(e);
+    }
+    if (data !== null){
+      try{
+        data = JSON.parse(data);
+        if (Array.isArray(data)) setFlashcardSets([...data]);
+        else setFlashcardSets([data]);
+      } catch(e){
+        console.log(e);
+      }
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <Text>
-        Flash Cards Groups
-        {flashcardSet.map((entry, index) => (
-          <TouchableOpacity style={styles.groupName} key={index}>
-            <View style={styles.groupName}>
-              <Button
-                title={entry.set}
-                onPress={() => {
-                  props.navigation.navigate("FlashcardSetScreen", flashcardSet);
-                }}
-              ></Button>
-            </View>
+      <View style={styles.headerSection}>
+        <Text style={styles.header}>
+          Flashcard Groups
+        </Text>
+      </View>
+      <ScrollView style={styles.mainSection}>
+      {flashcardSetsRef.current.map((flashcardSet, index) => (
+          <TouchableOpacity style={styles.setBorder} key={index} onPress={()=>{props.navigation.navigate("FlashcardSetScreen", {
+              flashcards: flashcardSet.flashcards,
+              set: flashcardSet.set,
+              delete: false,
+              edit: false,
+              initial: true,
+              setIndex: index
+            }
+          )}}>
+            <Text style={styles.setName}>
+              {flashcardSet.set}
+            </Text>
           </TouchableOpacity>
         ))}
-      </Text>
-      <Button
-        title="Make new Set"
-        onPress={() => {
-          props.navigation.navigate("FlashcardsAddSet");
-        }}
-      />
+      </ScrollView>
+      <View style={styles.bottomSection}>
+        <TouchableOpacity onPress={() => {props.navigation.navigate("FlashcardsAddSet")}}>
+          <Text style={styles.createNewSet}>Create New Set</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomSection: {
+    flex: .2,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    paddingRight: 10,
+    paddingBottom: 10
+  },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "flex-end",
-    bottom: 50,
+    backgroundColor: colors.white,
+    paddingTop: '15%'
   },
-  groupName: {
-    flex: 0.5,
-    justifyContent: "center",
-    color: "black",
-    fontSize: 100,
+  createNewSet: {
+    fontWeight: 'bold',
+    fontSize: 18
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 30
+  },
+  headerSection: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  mainSection: {
+    flex: .8
+  },
+  setBorder: {
+    borderColor: colors.paleSilver,
+    borderWidth: 2,
+    justifyContent: 'center',
+    width: '100%',
+    height: 45
+  },
+  setName: {
+    fontWeight: 'bold',
+    fontSize: 24,
+    paddingLeft: 10
   },
 });
-
-// const menuStyle = StyleSheet.creat({
-//   container: {},
-// });
-
-// const flashCardStyle = StyleSheet.create({
-//   rectangle: {
-//     width: "2000px",
-//     height: "800px",
-//     backgroundColor: "peach",
-//   },
-// });
-
-// const rectangleStyle = StyleSheet.create({
-//   rectangle: {
-//     width: "50px",
-//     height: "50px",
-//     backgroundColor: "black",
-//   },
-// });

@@ -11,7 +11,7 @@ export default function CoursePlannerScreen( props ){
     const [indexToDelete, setIndexToDelete] = useState(0);
     const [courseEntries, setCourseEntries_] = useState([]);
     const courseEntriesRef = useRef(courseEntries);
-    const setCourseEntries = async (data) => {
+    const setCourseEntries = (data) => {
         courseEntriesRef.current = data;
         setCourseEntries_(data);
     };
@@ -29,14 +29,14 @@ export default function CoursePlannerScreen( props ){
                     const courseEntry = {
                         semester: props.route.params.semester,
                         entries: props.route.params.entries
-                    }
+                    };
                     for (let i = 0; i < courseEntries_.length; i++){
                         if (courseEntries_[i].semester === courseEntry.semester){
                             courseEntries_[i].entries.push({
                                 name: courseEntry.entries[0].name,
                                 number: courseEntry.entries[0].number,
                                 units: courseEntry.entries[0].units
-                            })
+                            });
                             newEntry = false;
                             break;
                         }
