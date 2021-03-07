@@ -1,4 +1,5 @@
 import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
         StyleSheet, Text, View, TouchableOpacity, 
         TouchableWithoutFeedback, Keyboard, TextInput } from 'react-native';
@@ -8,8 +9,33 @@ import colors from '../config/colors.js';
 export default function SignUpScreen( {navigation} ){
     const [fullNameInput, setFullNameInput] = React.useState('');
     const [universityNameInput, setUniversityNameInput] = React.useState('');
-    const [usernameInput, setUsernameInput] = React.useState('');
+    const [emailInput, setemailInput] = React.useState('');
     const [passwordInput, setPasswordInput] = React.useState('');
+
+    async function handleSubmit(){
+        await fetch('https://sfhacks-studying-app.herokuapp.com/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: fullNameInput,
+                email: emailInput,
+                password: passwordInput
+            })
+        })
+            .then(response => response.json())
+            .then(async (data) => {
+                if(data.message) console.log(data.message);
+                else if(data.token){
+                    await AsyncStorage.setItem('token', data.token);
+                    navigation.navigate('Main');
+                }
+            })
+            .catch(e => {
+                console.log("error: ", e.message);
+            });
+    }
 
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -40,13 +66,13 @@ export default function SignUpScreen( {navigation} ){
                     />
                     <TextInput 
                         style={styles.textInput}
-                        onChangeText={text => setUsernameInput(text)}
-                        value={usernameInput}
-                        autoCompleteType='username'
+                        onChangeText={text => setemailInput(text)}
+                        value={emailInput}
+                        autoCompleteType='email'
                         autoCorrect={false}
                         keyboardAppearance='dark'
-                        placeholder='Username'
-                        textContentType='username'
+                        placeholder='email'
+                        textContentType='emailAddress'
                     />
                     <TextInput 
                         style={styles.textInput}
@@ -59,7 +85,7 @@ export default function SignUpScreen( {navigation} ){
                         secureTextEntry={true}
                         textContentType='password'
                     />
-                    <TouchableOpacity style={styles.signUpButton}>
+                    <TouchableOpacity style={styles.signUpButton} onPress={()=>{handleSubmit()}}>
                         <Text style={styles.signUpButtonText}>Sign up</Text>
                     </TouchableOpacity>
                 </View>

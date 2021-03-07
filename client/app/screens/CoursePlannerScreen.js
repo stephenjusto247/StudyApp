@@ -162,6 +162,10 @@ export default function CoursePlannerScreen( props ){
 
     async function storeData(value){
         try{
+            // await fetch('https://sfhacks-studying-app.herokuapp.com/courseplanner/add-planner', {
+            //     method: "POST",
+            //     headers
+            // })
             const serializedValue = JSON.stringify(value);
             await AsyncStorage.setItem('coursePlanner', serializedValue);
         } catch(e){

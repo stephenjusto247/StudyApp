@@ -77,4 +77,15 @@ router.delete('/delete-account', verify, async (req, res) => {
   }
 });
 
+router.get('/get-account-details', verify, async (req, res) => {
+  try{
+    const user = await User.findOne({ _id: req.user._id });
+    if(!user) return res.status(400).json({message: 'User cannot be found'});
+    
+    return res.status(200).json({name: user.name, email: user.email});    
+  } catch {
+    return res.status(500).json({message: 'Failed to get account details'});
+  }
+})
+
 module.exports = router;
