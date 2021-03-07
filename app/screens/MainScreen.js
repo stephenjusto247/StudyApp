@@ -3,7 +3,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AccountScreen from './AccountScreen.js';
 import FlashcardsStack from './FlashcardsStack.js';
-import CoursesScreen from './CoursesScreen.js';
+import CourseScreenStack from './CourseScreenStack.js';
 import CoursePlannerStack from './CoursePlannerStack.js';
 
 const Tab = createBottomTabNavigator();
@@ -21,7 +21,7 @@ export default function MainScreen(){
             />
             <Tab.Screen
                 name='CS'
-                component={CoursesScreen}
+                component={CourseScreenStack}
             />
             <Tab.Screen
                 name='CP'

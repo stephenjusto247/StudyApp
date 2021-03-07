@@ -1,13 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Switch, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Switch, Button, TouchableOpacity } from 'react-native';
 import SelectMultiple from 'react-native-select-multiple'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from '../config/colors.js';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default function EditCourses( {navigation} ){
-    const[className, setClassName] = React.useState('');
-    const onChangeText = text => setClassName(text);
+export default function EditCourses( props ){
+    const [className, setClassName] = React.useState('');
+    const [hour, setHour] = React.useState();
+    const [min, setMin] = React.useState();
+    const[reminderEnabled, setReminderEnabled] = React.useState(false);
+    const[selectedDays, setSelections] = React.useState([]);
+    const [timeTitle, setTimeTitle] = React.useState('Select Time');
 
     const [isTimePickerVisible, setTimePickerVisibility] = React.useState(false);
     const showTimePicker = () => {
@@ -16,88 +19,114 @@ export default function EditCourses( {navigation} ){
     const hideTimePicker = () => {
         setTimePickerVisibility(false);
     };
-    const handleConfirm = (date) => {
-        var hours = date.getHours();
-        var min = date.getMinutes();
-        console.log(hours);
-        console.log(min);
+    const handleTime = (date) => {
+        let hour = date.getHours();
+        let min = date.getMinutes();
+        setHour(hour);
+        setMin(min);
+        setTimeTitle(date.getHours().toString() + ':' + date.getMinutes().toString());
         hideTimePicker();
     };
-
-    const[reminderEnabled, setReminderEnabled] = React.useState(false);
-    const toggleSwitch = () => setReminderEnabled(previousState => !previousState);
 
     const days =[
         'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
     ]
-    const[selectedDays, setState] = React.useState([]);
-    const onSelectionsChange = (selectedDays) => setState({selectedDays});
+
+    function handleSubmit(){
+        const course ={
+            name: className,
+            reminder: reminderEnabled,
+            days: selectedDays.map(({value}) => value),
+            hour: hour,
+            min: min,
+        }
+        props.navigation.navigate('CoursesScreen', course);
+    }
 
     return(
         <View style={styles.container}>
-            <View>
+            <View style={styles.header}>
+                <Text style={styles.title}>
+                    Class Schedule
+                </Text>
+            </View>
+            <View style={styles.firstSection}>
                 <TextInput 
-                    styles={styles.textInput}
-                    onChangeText={onChangeText}
+                    style={styles.textInput}
+                    onChangeText={text => setClassName(text)}
                     value={className}
                     keyboardAppearance='dark'
                     placeholder='Class Name'
                     required
                 />
-            </View>
-            <View>
-                <Button title='Select Time' onPress={showTimePicker} />
+
+                <Button title={timeTitle} onPress={showTimePicker} />
                 <DateTimePickerModal
                     isVisible={isTimePickerVisible}
                     mode='time'
-                    onConfirm={handleConfirm}
+                    onConfirm={handleTime}
                     onCancel={hideTimePicker}
                 />
             </View>
 
-            <View>
+            <View style={styles.middleSection}>
                 <Text>Add Reminder</Text>
                 <Switch
-                    onValueChange={toggleSwitch}
+                    onValueChange={() => setReminderEnabled(previousState => !previousState)}
                     value={reminderEnabled}
                 />
             </View>
 
-            <View>
+            <View style={styles.bottomSection}>
                 <SelectMultiple
                     items={days}
                     selectedItems={selectedDays}
-                    onSelectionsChange={setState}
-                    value={selectedDays}
+                    onSelectionsChange={selectedItems => setSelections(selectedItems)}
                 />
-            </View>
-
-            <View>
                 <TouchableOpacity
-                    styles={styles.submitButton}
-                    onPress={() => {
-                        navigation.navigate('CoursesScreen')
-                    }}
+                    onPress={() => {props.navigation.navigate('CoursesScreen')}}
+                >
+                    <Text>Back</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={handleSubmit}
                 >
                     <Text>Submit</Text>
                 </TouchableOpacity>
             </View>
-
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.white,
-        flex: 1
+        flex: 1,
+        backgroundColor: colors.paleSilver,
+        paddingTop: '15%'
+    },
+    header: {
+        alignSelf: 'center',
+    },
+    title: {
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: 30,
+        paddingBottom: 5
     },
     textInput: {
-        height: 100,
+        height: 45,
         width: 300,
-        borderColor: 'red',
-        borderWidth: 100,
+        borderColor: colors.dimGray,
+        borderWidth: 1,
         borderRadius: 10,
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
     },
+    firstSection: {
+        justifyContent: 'center',
+    },
+    middleSection: {
+    },
+    bottomSection: {
+    }
+
 });
