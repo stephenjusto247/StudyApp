@@ -19,12 +19,16 @@ db.once('open', () => console.log('Connected to Database'));
 // Import Routes
 const authRoute = require('./routes/auth');
 const flashcardsRoute = require('./routes/flashcards');
+const coursePlannerRoute = require('./routes/courseplanner');
+
 
 server.use(express.json());
 
 // Route Middlewares
 server.use('/auth', authRoute);
 server.use('/flashcards', flashcardsRoute);
+server.use('/courseplanner', coursePlannerRoute);
+
 
 
 

@@ -1,22 +1,23 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, Switch, Button, TouchableOpacity } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { StyleSheet, Text, View, TextInput, Switch, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectMultiple from 'react-native-select-multiple'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import colors from '../config/colors.js';
 
 export default function EditCourses( props ){
-    const [mode, setMode] = React.useState(0);
-    const [className, setClassName] = React.useState('');
-    const [hour, setHour] = React.useState(-1);
-    const [min, setMin] = React.useState(-1);
-    const[reminderEnabled, setReminderEnabled] = React.useState(false);
-    const[selectedDays, setSelections] = React.useState([]);
-    const[index, setIndex] = React.useState(0);
+    const [mode, setMode] = useState(0);
+    const [className, setClassName] = useState('');
+    const [hour, setHour] = useState(-1);
+    const [min, setMin] = useState(-1);
+    const[reminderEnabled, setReminderEnabled] = useState(false);
+    const[selectedDays, setSelections] = useState([]);
+    const[index, setIndex] = useState(0);
 
-    const [timeTitle, setTimeTitle] = React.useState('Select Time');
-    const [isTimePickerVisible, setTimePickerVisibility] = React.useState(false);
+    const [timeTitle, setTimeTitle] = useState('Select Time');
+    const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
-    React.useEffect(()=>{
+    useEffect(()=>{
         if (props.route.params){
             setMode(1);
             setClassName(props.route.params.name);
@@ -83,70 +84,70 @@ export default function EditCourses( props ){
     ]
 
     return(
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>
-                    Class Schedule
-                </Text>
-            </View>
-            <View style={styles.firstSection}>
-                <TextInput 
-                    style={styles.textInput}
-                    onChangeText={text => setClassName(text)}
-                    value={className}
-                    keyboardAppearance='dark'
-                    placeholder='Class Name'
-                    required
-                />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>
+                        Class Schedule
+                    </Text>
+                </View>
+                <View style={styles.firstSection}>
+                    <TextInput 
+                        style={styles.textInput}
+                        onChangeText={text => setClassName(text)}
+                        value={className}
+                        keyboardAppearance='dark'
+                        placeholder='Class Name'
+                        required
+                    />
 
-                <Button 
-                    title={timeTitle} 
-                    
-                    onPress={showTimePicker} 
-                />
-                <DateTimePickerModal
-                    isVisible={isTimePickerVisible}
-                    mode='time'
-                    onConfirm={handleTime}
-                    onCancel={hideTimePicker}
-                />
-            </View>
+                    <Button 
+                        title={timeTitle} 
+                        
+                        onPress={showTimePicker} 
+                    />
+                    <DateTimePickerModal
+                        isVisible={isTimePickerVisible}
+                        mode='time'
+                        onConfirm={handleTime}
+                        onCancel={hideTimePicker}
+                    />
+                </View>
 
-            <View style={styles.middleSection}>
-                <Text style={styles.reminderText}>Add Reminder</Text>
-                <Switch
-                    onValueChange={() => setReminderEnabled(previousState => !previousState)}
-                    value={reminderEnabled}
-                />
-            </View>
+                <View style={styles.middleSection}>
+                    <Text style={styles.reminderText}>Add Reminder</Text>
+                    <Switch
+                        onValueChange={() => setReminderEnabled(previousState => !previousState)}
+                        value={reminderEnabled}
+                    />
+                </View>
 
-            <View style={styles.bottomSection}>
-                <SelectMultiple
-                    items={days}
-                    selectedItems={selectedDays}
-                    onSelectionsChange={selectedItems => setSelections(selectedItems)}
-                />
-            </View>
-            <View style={styles.buttons}>
-                {mode === 0 ? 
-                    <TouchableOpacity>
-                        <Text style={styles.button} onPress={handleAdd}>Add</Text>
+                <View style={styles.bottomSection}>
+                    <SelectMultiple
+                        items={days}
+                        selectedItems={selectedDays}
+                        onSelectionsChange={selectedItems => setSelections(selectedItems)}
+                    />
+                </View>
+                <View style={styles.buttons}>
+                    {mode === 0 ? 
+                        <TouchableOpacity>
+                            <Text style={styles.button} onPress={handleAdd}>Add</Text>
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity>
+                            <Text style={styles.button} onPress={handleEdit}>Edit</Text>
+                        </TouchableOpacity>
+                    }
+                    <TouchableOpacity
+                        onPress={() => {props.navigation.navigate('CoursesScreen')}}
+                    >
+                        <Text style={styles.button}>Back</Text>
                     </TouchableOpacity>
-                    :
-                    <TouchableOpacity>
-                        <Text style={styles.button} onPress={handleEdit}>Edit</Text>
-                    </TouchableOpacity>
-                }
-                <TouchableOpacity
-                    onPress={() => {props.navigation.navigate('CoursesScreen')}}
-                >
-                    <Text style={styles.button}>Back</Text>
-                </TouchableOpacity>
 
+                </View>   
             </View>
-
-                
-        </View>
+        </TouchableWithoutFeedback>
     )
 }
 

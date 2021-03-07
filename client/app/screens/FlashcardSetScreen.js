@@ -41,7 +41,7 @@ export default function FlashcardsStack(props) {
       }
     }
   }, [props.route.params]);
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.headerSection}>
