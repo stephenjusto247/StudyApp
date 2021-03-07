@@ -18,23 +18,8 @@ export default function FlashcardEditScreen(props){
     function handleDelete(){
         props.navigation.navigate('FlashcardSetScreen', {
             index: props.route.params.index,
-            delete: true,
-            edit: false,
-            add: false,
-            initial: false
-        });
-    }
-
-    function handleEdit(){
-        props.navigation.navigate('FlashcardSetScreen', {
-            index: props.route.params.index,
-            question: question,
-            answer: answer,
-            edit:  true,
-            delete: false,
-            add: false,
-            initial: false
-        });
+            delete: true
+        })
     }
 
     return(
@@ -77,9 +62,6 @@ export default function FlashcardEditScreen(props){
                     }}>
                         <Text style={styles.cancelText}>Cancel</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.edit} onPress={handleEdit}>
-                        <Text style={styles.editText}>Edit</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.delete} onPress={handleDelete}>
                         <Text style={styles.deleteText}>Delete</Text>
                     </TouchableOpacity>
@@ -93,7 +75,7 @@ const styles = StyleSheet.create({
     bottomSection: {
         flex: .3333,
         flexDirection: 'row',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-between'
     },
     cancel: {
         alignItems: 'center',
@@ -127,21 +109,6 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     deleteText: {
-        fontWeight: 'bold',
-        fontSize: 18,
-        color: colors.paleSilver
-    },
-    edit: {
-        alignItems: 'center',
-        borderColor: colors.paleSilver,
-        borderWidth: 2,
-        borderRadius: 10,
-        justifyContent: 'center',
-        marginTop: 10,
-        height: 45,
-        width: 100
-    },
-    editText: {
         fontWeight: 'bold',
         fontSize: 18,
         color: colors.paleSilver
