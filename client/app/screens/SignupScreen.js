@@ -41,7 +41,7 @@ export default function SignUpScreen( {navigation} ){
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
                 <View style={styles.headerSection}>
-                    <Text style={styles.title}>StudyApp</Text>
+                    <Text style={styles.title}>StudyLab</Text>
                 </View>
                 <View style={styles.middleSection}>
                     <TextInput 

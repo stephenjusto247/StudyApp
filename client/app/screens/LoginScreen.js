@@ -37,7 +37,7 @@ export default function LoginScreen({navigation}){
             <View style={styles.container}>
                 <StatusBar barStyle='dark-content'/>
                 <View style ={styles.headerSection}>
-                    <Text style={styles.title}>StudyApp</Text>
+                    <Text style={styles.title}>StudyLab</Text>
                 </View>
                 <View style={styles.middleSection}>
                     <TextInput 
