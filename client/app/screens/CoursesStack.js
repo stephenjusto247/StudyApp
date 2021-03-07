@@ -17,6 +17,7 @@ export default function CoursesStack( props ){
             <Stack.Screen 
                 name='EditCourses'
                 component={EditCourses}
+                options={{headerShown: false}}
             />
         </Stack.Navigator>
     )
