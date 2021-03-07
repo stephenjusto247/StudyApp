@@ -1,97 +1,46 @@
-import React from "react";
-<<<<<<< HEAD:app/screens/FlashcardSetScreen.js
-import { Text, View, Button, TouchableOpacity } from "react-native";
-
-export default function FlashcardsStack(props) {
-  const [flashcards, setFlashcards] = React.useState([]);
-=======
+import React, {useState, useEffect, useRef} from "react";
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
 import colors from '../config/colors.js';
 
 export default function FlashcardsStack(props) {
-  const [test, setTest] = React.useState('l');
-  const [flashcardSet, setFlashcardSet] = React.useState({});
+  const [lastAction, setLastAction] = useState('initial');
+  const [flashcardSet, setFlashcardSet_] = useState({});
+  const flashcardSetRef = useRef(flashcardSet);
+  const setFlashcardSet = (data) => {
+    flashcardSetRef.current = data;
+    setFlashcardSet_(data);
+  }
 
->>>>>>> 55a98ca85a06d7a2dce9005d0114e793885a6eae:client/app/screens/FlashcardSetScreen.js
-  React.useEffect(() => {
+  useEffect(() => {
+    //console.log('in effect: ');
     //console.log(props.route.params);
     if (props.route.params) {
-<<<<<<< HEAD:app/screens/FlashcardSetScreen.js
-      let flashcards_ = [...flashcards];
-      const newFlashcard = {
-        question: props.route.params.question,
-        answer: props.route.params.answer,
-      };
-      flashcards_.push(newFlashcard);
-      setFlashcards([...flashcards_]);
-    }
-  }, [props.route.params]);
-  return (
-    <View>
-      <Text>
-        SetScreen
-        {flashcards.map((entry, index) => (
-          <TouchableOpacity key={index}>
-            <View>
-              <Text>{entry.question}</Text>
-            </View>
-            <View>
-              <Text>{entry.answer}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </Text>
-      <Button
-        title="MakeFlashCards"
-        onPress={() => {
-          props.navigation.navigate("AddFlashcards");
-        }}
-      />
-      <Button
-        title="Study"
-        onPress={() => {
-          props.navigation.navigate("FlashcardStudy", flashcards);
-        }}
-      />
-      <Button
-        title="Back"
-        onPress={() => {
-          props.navigation.navigate("Flashcards", flashcards);
-        }}
-      />
-    </View>
-  );
-}
-=======
       if (props.route.params.delete){
-        let flashcardSet_ = flashcardSet;
-        console.log('delete----------')
-        console.log(flashcardSet_);
-        console.log(flashcardSet_.flashcards[props.route.params.index]);
-        flashcardSet_.flashcards = [];
-        console.log(flashcardSet_);
-        setFlashcardSet(flashcardSet_);
-        setTest('delete');
-        props.route.params.delete = null;
+        setFlashcardSet({
+          flashcards : flashcardSet.flashcards.filter((flashcard, index) => index !== props.route.params.index),
+          set: flashcardSet.set
+        });
+        setLastAction('delete');
+      }
+      else if (props.route.params.edit){
+        let flashcards_ = flashcardSet.flashcards;
+        flashcards_[props.route.params.index] = {
+          answer: props.route.params.answer,
+          question: props.route.params.question
+        };
+        setFlashcardSet({flashcards: flashcards_, set: flashcardSet.set});
+        setLastAction('edit');
       }
       else{
         const newFlashcard = {
           set: props.route.params.set,
           flashcards: props.route.params.flashcards
         };
-        console.log('pusshing-------')
-        console.log(newFlashcard);
         setFlashcardSet(newFlashcard);
-        setTest('add');
+        setLastAction('add');
       }
     }
   }, [props.route.params]);
-
-  React.useEffect(()=>{
-    console.log('new-------');
-    console.log(test);
-    console.log(flashcardSet);
-  }, [test]);
 
   return (
     <View style={styles.container}>
@@ -101,13 +50,14 @@ export default function FlashcardsStack(props) {
         </Text>
       </View> 
       <ScrollView style={styles.mainSection}>
-      {(flashcardSet.flashcards !== undefined) ? 
-        flashcardSet.flashcards.map((entry, index) =>{
+      {(flashcardSetRef.current.flashcards !== undefined) ? 
+        flashcardSetRef.current.flashcards.map((entry, index) =>{
             return(
               <TouchableOpacity key={index} onPress={()=>
                 props.navigation.navigate('FlashcardEdit', {
                   question: entry.question, 
                   answer: entry.answer,
+                  set: flashcardSet.set,
                   index: index})}
               >
                 <View style={styles.flashcard}>
@@ -127,10 +77,16 @@ export default function FlashcardsStack(props) {
         <TouchableOpacity 
           style={styles.back}
           onPress={() => {
-            props.navigation.navigate("Flashcards", flashcardSet);
+            props.navigation.navigate("Flashcards", {
+              set: flashcardSet.set,
+              flashcards: flashcardSet.flashcards,
+              lastAction: lastAction,
+              deleteSet: false
+            });
           }}
         >
-          <Text style={styles.backText}>Back</Text>
+        {props.route.params.initial ?  <Text style={styles.backText}>Back</Text>
+        : <Text style={styles.backText}>Save</Text>}
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.study}
@@ -143,10 +99,26 @@ export default function FlashcardsStack(props) {
         <TouchableOpacity 
           style={styles.create}
           onPress={() => {
-            props.navigation.navigate("AddFlashcards", flashcardSet);
+            props.navigation.navigate("AddFlashcards", {
+              flashcards: flashcardSet.flashcards,
+              set: flashcardSet.set,
+              deleteSet: false
+            });
           }}
         >
           <Text style={styles.createText}>Create</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.deleteSection}>
+        <TouchableOpacity 
+          style={styles.delete}
+          onPress={() => {
+            props.navigation.navigate('Flashcards', {
+              setIndex: props.route.params.setIndex,
+              deleteSet: true
+          })
+        }}>
+          <Text style={styles.deleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -170,7 +142,7 @@ const styles = StyleSheet.create({
     color: colors.paleSilver
   },
   bottomSection: {
-    flex: .3333,
+    flex: .16665,
     flexDirection: 'row',
     justifyContent: 'space-evenly'
   },
@@ -192,6 +164,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     color: colors.paleSilver
+  },
+  delete:{
+    alignItems: 'center',
+    borderColor: colors.red,
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 45,
+    width: 100
+  },
+  deleteText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: colors.red
+  },
+  deleteSection: {
+    flex: .16665,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
   },
   empty: {
     fontSize: 16,
@@ -256,4 +248,3 @@ const styles = StyleSheet.create({
     color: colors.paleSilver
   }
 });
->>>>>>> 55a98ca85a06d7a2dce9005d0114e793885a6eae:client/app/screens/FlashcardSetScreen.js
