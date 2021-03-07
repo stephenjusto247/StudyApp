@@ -1,47 +1,120 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  StyleSheet, Text, View, Button,
+  StyleSheet, Text, View,
   TouchableOpacity, ScrollView} from "react-native";
 import colors from '../config/colors.js';
 
 export default function FlashcardScreen(props) {
-  const [flashcardSets, setFlashcardSet] = React.useState([]);
-  React.useEffect(() => {
+  const [flashcardSets, setFlashcardSets_] = useState([]);
+  const flashcardSetsRef = useRef(flashcardSets);
+  const setFlashcardSets = (data) => {
+    flashcardSetsRef.current = data;
+    //console.log('in ref: ');
+    //console.log(data);
+    setFlashcardSets_(data);
+  }
+
+  useEffect(()=>{
+    readData();
+  }, []);
+
+  useEffect(() => {
     if (props.route.params) {
-      if (flashcardSets.length > 0){
+      //console.log(props.route.params);
+      if (props.route.params.deleteSet){
+        if (flashcardSets.length > 0){
+          setFlashcardSets(flashcardSets.filter((flashcardSet, index) => index !== props.route.params.setIndex));
+          storeData(flashcardSetsRef.current);
+        }
+        else{
+          const flashcardSet = []
+          setFlashcardSets(flashcardSet);
+          storeData(flashcardSet);
+        }
+      }
+      else if(props.route.params.lastAction === 'edit' || props.route.params.lastAction === 'delete'){
         let flashcardSets_ = [...flashcardSets];
-        let newFlashcardSet = true;
-        const flashcardSet = {
-          set: props.route.params.set,
-          flashcards: props.route.params.flashcards
-        };
+        //console.log('in edit......');
+        //console.log('new is : ')
+        //console.log(props.route.params.flashcards);
         for (let i = 0; i < flashcardSets_.length; i++){
-          if (flashcardSets_[i].set === flashcardSet.set){
-            for (let j = 0; j < props.route.params.flashcards.length; j++){
-              if (props.route.params.flashcards[j].new){
-                flashcardSets_[i].flashcards.push({
-                  question: props.route.params.flashcards[j].question,
-                  answer: props.route.params.flashcards[j].answer
-                });
-              }
-            }
-            newFlashcardSet = false;
+          if (flashcardSets_[i].set === props.route.params.set){
+            flashcardSets_[i].flashcards = props.route.params.flashcards;
+            console.log('so ...');
+            console.log(flashcardSets_[i].flashcards);
+            console.log('and');
+            console.log(flashcardSets_[i]);
             break;
           }
         }
-        if (newFlashcardSet) flashcardSets_.push(flashcardSet);
-        setFlashcardSet([...flashcardSets_]);
+        setFlashcardSets(flashcardSets_);
+        storeData(flashcardSets_);
       }
       else{
-        let newFlashcardSet = {
-          set: props.route.params.set,
-          flashcards: props.route.params.flashcards
+        if (flashcardSets.length > 0){
+          let index = 0;
+          let flashcardSets_ = [...flashcardSets];
+          let newFlashcardSet = true;
+          const flashcardSet = {
+            set: props.route.params.set,
+            flashcards: props.route.params.flashcards
+          };
+          for (let i = 0; i < flashcardSets_.length; i++){
+            index = i;
+            if (flashcardSets_[i].set === flashcardSet.set){
+              flashcardSets_[i].flashcards = props.route.params.flashcards;
+              newFlashcardSet = false;
+              break;
+            }
+          }
+          if (newFlashcardSet) {
+            flashcardSet.flashcards = [];
+            flashcardSets_.push(flashcardSet);
+          }
+          setFlashcardSets([...flashcardSets_]);
+          storeData(flashcardSetsRef.current);
         }
-        newFlashcardSet.flashcards.splice(0, 1);
-        setFlashcardSet([newFlashcardSet]);
+        else{
+          let newFlashcardSet = {
+            set: props.route.params.set,
+            flashcards: props.route.params.flashcards,
+            index: 0
+          }
+          newFlashcardSet.flashcards = [];
+          setFlashcardSets([newFlashcardSet]);
+          storeData([newFlashcardSet]);
+        }
       }
     }
   }, [props.route.params]);
+
+  async function storeData(value){
+    try{
+      const serializedValue = JSON.stringify(value);
+      await AsyncStorage.setItem('flashcardsScreen', serializedValue);
+    } catch(e){
+      console.log(e);
+    }
+  }
+
+  async function readData(){
+    let data;
+    try{
+      data = await AsyncStorage.getItem('flashcardsScreen');
+    } catch(e){
+      console.log(e);
+    }
+    if (data !== null){
+      try{
+        data = JSON.parse(data);
+        if (Array.isArray(data)) setFlashcardSets([...data]);
+        else setFlashcardSets([data]);
+      } catch(e){
+        console.log(e);
+      }
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -51,8 +124,16 @@ export default function FlashcardScreen(props) {
         </Text>
       </View>
       <ScrollView style={styles.mainSection}>
-      {flashcardSets.map((flashcardSet, index) => (
-          <TouchableOpacity style={styles.setBorder} key={index} onPress={()=>{props.navigation.navigate("FlashcardSetScreen", flashcardSet)}}>
+      {flashcardSetsRef.current.map((flashcardSet, index) => (
+          <TouchableOpacity style={styles.setBorder} key={index} onPress={()=>{props.navigation.navigate("FlashcardSetScreen", {
+              flashcards: flashcardSet.flashcards,
+              set: flashcardSet.set,
+              delete: false,
+              edit: false,
+              initial: true,
+              setIndex: index
+            }
+          )}}>
             <Text style={styles.setName}>
               {flashcardSet.set}
             </Text>
