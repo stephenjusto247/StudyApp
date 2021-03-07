@@ -138,8 +138,7 @@ router.get('/get-user-sets', verify, async (req, res) => {
     // Get all info for each set
     const allSets = await Promise.all(setIDs.map(async (setID) => {
       let flashcards = await FlashcardSet.findOne({ _id: setID })
-        .then(response => response.flashcards);
-      return { setID: setID, flashcards: flashcards };
+      return { name: flashcards.name, flashcards: flashcards.flashcards };
     }));
 
     return res.status(200).json({ sets: allSets });
