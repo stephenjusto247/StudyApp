@@ -28,7 +28,9 @@ const addUserSetslashcardSetValidation = (data) => {
   const schema = Joi.object({
     sets: Joi.array().items(Joi.object({
       name: Joi.string().max(64).required(),
-      flashcards: Joi.array().items(Joi.object({
+      flashcards: Joi.array().items(Joi.object({      
+        _id: Joi.string(),
+        new: Joi.any(),
         question: Joi.string().max(128).required(),
         answer: Joi.string().max(128).required(),
         hint: Joi.string().max(128)
@@ -42,6 +44,7 @@ const updateFlashcardSetValidation = (data) => {
     setID: Joi.string().required(),
     name: Joi.string().max(64).required(),
     flashcards: Joi.array().items(Joi.object({
+      _id: Joi.string(),
       question: Joi.string().max(128).required(),
       answer: Joi.string().max(128).required(),
       hint: Joi.string().max(128)

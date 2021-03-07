@@ -69,7 +69,6 @@ export default function FlashcardScreen(props) {
           let newFlashcardSet = {
             name: props.route.params.name,
             flashcards: props.route.params.flashcards,
-            index: 0
           }
           newFlashcardSet.flashcards = [];
           setFlashcardSets([newFlashcardSet]);
@@ -81,7 +80,25 @@ export default function FlashcardScreen(props) {
 
   async function storeData(value){
     try{
-      console.log(value);
+      console.log(value)
+      const token = await AsyncStorage.getItem('token');
+      await fetch('https://sfhacks-studying-app.herokuapp.com/flashcards/add-user-sets', {
+        method: 'POST',
+        headers: {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            sets: value
+        })
+      })
+        .then(response => response.json())
+        .then(async (data) => {
+            console.log(data.message);
+        })
+        .catch(e => {
+            console.log("error: ", e.message);
+        });
       const serializedValue = JSON.stringify(value);
       await AsyncStorage.setItem('flashcardsScreen', serializedValue);
     } catch(e){

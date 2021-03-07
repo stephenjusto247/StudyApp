@@ -24,7 +24,37 @@ export default function LoginScreen({navigation}){
                 if(data.message) console.log(data.message);
                 else if(data.token){
                     await AsyncStorage.setItem('token', data.token);
+                    await loadFlashcards();
                     navigation.navigate('Main');
+                }
+            })
+            .catch(e => {
+                console.log("error: ", e.message);
+            });
+    }
+
+    async function loadFlashcards() {
+        const token = await AsyncStorage.getItem('token');
+        await fetch('https://sfhacks-studying-app.herokuapp.com/flashcards/get-user-sets', {
+            method: 'GET',
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(async (data) => {
+                
+                if(data.message) console.log(data.message);
+                else if(data.sets){
+                    try{
+                        console.log(data.sets)
+                        const serializedValue = JSON.stringify(data.sets);
+                        console.log(serializedValue)
+                        await AsyncStorage.setItem('flashcardsScreen', serializedValue);
+                    } catch(e){ 
+                        console.log("error: ", e.message);
+                    }
                 }
             })
             .catch(e => {
