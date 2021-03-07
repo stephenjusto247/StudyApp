@@ -1,8 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import colors from '../config/colors';
 
 export default function AccountScreen( {navigation} ){
+
+    const [name, setName] = React.useState('');
+    const [email, setEmail] = React.useState('');
+
+    useEffect(() => {
+        async function fetchData() {
+            const token = await AsyncStorage.getItem('token');
+            await fetch('https://sfhacks-studying-app.herokuapp.com/auth/get-account-details', {
+                method: 'GET',
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(response => response.json())
+                .then(async (data) => {
+                    if(data.message) console.log(data.message);
+                    else if(data.name && data.email){
+                        setName(data.name);
+                        setEmail(data.email);
+                    }
+                })
+                .catch(e => {
+                    console.log("error: ", e.message);
+                });
+        }
+            fetchData();
+    }, []);
+
     return(
         <View style={styles.container}>
             <View style={styles.header}>
@@ -14,12 +44,12 @@ export default function AccountScreen( {navigation} ){
             <View style={styles.mainSection}>
                 <View>
                     <Text>
-                        Name
+                        Name: {name}
                     </Text>
                 </View>
                 <View>
                     <Text>
-                        University Name
+                        Email: {email}
                     </Text>
                 </View>
             </View>
@@ -27,7 +57,10 @@ export default function AccountScreen( {navigation} ){
             <View style={styles.logout}>
                 <TouchableOpacity
                     style={styles.logoutButton}
-                    onPress={() => {navigation.navigate('Login')}}
+                    onPress={async () => {
+                        await AsyncStorage.removeItem('token');
+                        navigation.navigate('Login')
+                    }}
                 >
                     <Text style={styles.button}>Logout</Text>
                 </TouchableOpacity>

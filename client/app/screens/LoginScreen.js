@@ -1,11 +1,36 @@
 import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Keyboard, Text, View, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import colors from '../config/colors.js';
 
 export default function LoginScreen({navigation}){
-    const [usernameInput, setUsernameInput] = React.useState('');
+    const [emailInput, setemailInput] = React.useState('');
     const [passwordInput, setPasswordInput] = React.useState('');
+
+    async function handleSubmit(){
+        await fetch('https://sfhacks-studying-app.herokuapp.com/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: emailInput,
+                password: passwordInput
+            })
+        })
+            .then(response => response.json())
+            .then(async (data) => {
+                if(data.message) console.log(data.message);
+                else if(data.token){
+                    await AsyncStorage.setItem('token', data.token);
+                    navigation.navigate('Main');
+                }
+            })
+            .catch(e => {
+                console.log("error: ", e.message);
+            });
+    }
 
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -17,13 +42,13 @@ export default function LoginScreen({navigation}){
                 <View style={styles.middleSection}>
                     <TextInput 
                         style={styles.textInput}
-                        onChangeText={text => setUsernameInput(text)}
-                        value={usernameInput}
-                        autoCompleteType='username'
+                        onChangeText={text => setemailInput(text)}
+                        value={emailInput}
+                        autoCompleteType='email'
                         autoCorrect={false}
                         keyboardAppearance='dark'
-                        placeholder='Username'
-                        textContentType='username'
+                        placeholder='email'
+                        textContentType='emailAddress'
                     />
                     <TextInput 
                         style={styles.textInput}
@@ -39,7 +64,7 @@ export default function LoginScreen({navigation}){
                     <TouchableOpacity
                         style={styles.loginButton}
                         onPress={() => {
-                            navigation.navigate('Main')
+                            handleSubmit();
                         }}
                     >
                         <Text style={styles.loginButtonText}>Login</Text>
