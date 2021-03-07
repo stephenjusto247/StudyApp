@@ -5,26 +5,32 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './app/screens/LoginScreen.js';
 import SignupScreen from './app/screens/SignupScreen.js';
 import MainTabScreen from './app/screens/MainTabScreen.js';
+import AccountScreen from './app/screens/AccountScreen.js';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen
           name="Login"
           component={LoginScreen}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
-        <Stack.Screen 
+        <Stack.Screen
           name="Signup"
           component={SignupScreen}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
-        <Stack.Screen 
+        <Stack.Screen
           name="Main"
           component={MainTabScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name='Account'
+          component={AccountScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

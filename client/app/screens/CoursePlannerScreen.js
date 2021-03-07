@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import Dialog from 'react-native-dialog';
 import colors from '../config/colors.js';
 
 export default function CoursePlannerScreen( props ){
-    const [courseEntries, setCourseEntries] = React.useState([]);
-    const [dialogVisibility, setDialogVisibility] = React.useState(false);
-    const [dialogPrompt, setDialogPrompt_] = React.useState('');
-    const [semesterToDelete, setSemesterToDelete] = React.useState('');
-    const [indexToDelete, setIndexToDelete] = React.useState(0);
+    const [dialogVisibility, setDialogVisibility] = useState(false);
+    const [dialogPrompt, setDialogPrompt_] = useState('');
+    const [semesterToDelete, setSemesterToDelete] = useState('');
+    const [indexToDelete, setIndexToDelete] = useState(0);
+    const [courseEntries, setCourseEntries_] = useState([]);
+    const courseEntriesRef = useRef(courseEntries);
+    const setCourseEntries = (data) => {
+        courseEntriesRef.current = data;
+        setCourseEntries_(data);
+    };
 
-    React.useEffect(()=>{
+    useEffect(()=>{
+        readData();
+    }, []);
+
+    useEffect(()=>{
         if (props.route.params){
             if (props.route.params.index === undefined){
                 if (courseEntries.length > 0){
@@ -19,14 +29,14 @@ export default function CoursePlannerScreen( props ){
                     const courseEntry = {
                         semester: props.route.params.semester,
                         entries: props.route.params.entries
-                    }
+                    };
                     for (let i = 0; i < courseEntries_.length; i++){
                         if (courseEntries_[i].semester === courseEntry.semester){
                             courseEntries_[i].entries.push({
                                 name: courseEntry.entries[0].name,
                                 number: courseEntry.entries[0].number,
                                 units: courseEntry.entries[0].units
-                            })
+                            });
                             newEntry = false;
                             break;
                         }
@@ -36,6 +46,7 @@ export default function CoursePlannerScreen( props ){
                         courseEntries_ = sortCourseEntries(courseEntries_);
                     }
                     setCourseEntries([...courseEntries_]);
+                    storeData(courseEntriesRef.current);
                 }
                 else {
                     const courseEntry = {
@@ -43,6 +54,7 @@ export default function CoursePlannerScreen( props ){
                         entries: props.route.params.entries
                     }
                     setCourseEntries([courseEntry]);
+                    storeData(courseEntry);
                 }
             }
             else{
@@ -76,6 +88,7 @@ export default function CoursePlannerScreen( props ){
                     }
                 }
                 else courseEntries_.push(courseEntry);
+                storeData(courseEntries_);
                 setCourseEntries(courseEntries_);
             }
         }
@@ -139,11 +152,39 @@ export default function CoursePlannerScreen( props ){
             }
         }
         setCourseEntries(courseEntries_);
+        storeData(courseEntries_);
         setDialogVisibility(false);
     }
 
     function hideDialog(){
         setDialogVisibility(false);
+    }
+
+    async function storeData(value){
+        try{
+            const serializedValue = JSON.stringify(value);
+            await AsyncStorage.setItem('coursePlanner', serializedValue);
+        } catch(e){
+            console.log(e);
+        }
+    }
+
+    async function readData(){
+        let data;
+        try{
+            data = await AsyncStorage.getItem('coursePlanner');
+        } catch(e){
+            console.log(e);
+        }
+        if (data !== null){
+            try{
+                data = JSON.parse(data);
+                if (Array.isArray(data)) setCourseEntries([...data]);
+                else setCourseEntries([data]);
+            } catch(e){
+                console.log(e);
+            }
+        }
     }
 
     return(

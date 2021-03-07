@@ -11,6 +11,7 @@ web-build/
 
 # dependencies
 package-lock.json
+GCPFunctions/node_modules
 
 # misc
 .DS_Store
