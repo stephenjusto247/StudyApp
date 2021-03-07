@@ -42,6 +42,12 @@ export default function FlashcardsStack(props) {
           props.navigation.navigate("FlashcardStudy", flashcards);
         }}
       />
+      <Button
+        title="Back"
+        onPress={() => {
+          props.navigation.navigate("Flashcards", flashcards);
+        }}
+      />
     </View>
   );
 }

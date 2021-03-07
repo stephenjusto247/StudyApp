@@ -16,6 +16,8 @@ export default function FlashcardScreen(props) {
       let flashcards_ = [...flashcardSet];
       const newFlashcardSet = {
         set: props.route.params.set,
+        question: props.route.params.question,
+        answer: props.route.params.answer,
       };
       flashcards_.push(newFlashcardSet);
       setFlashcardSet([...flashcards_]);
