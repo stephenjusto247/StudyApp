@@ -27,7 +27,7 @@ export default function AccountScreen( {navigation} ){
             <View style={styles.logout}>
                 <TouchableOpacity
                     style={styles.logoutButton}
-                    onPress={() => {navigation.navigate('LoginScreen')}}
+                    onPress={() => {navigation.navigate('Login')}}
                 >
                     <Text style={styles.button}>Logout</Text>
                 </TouchableOpacity>
