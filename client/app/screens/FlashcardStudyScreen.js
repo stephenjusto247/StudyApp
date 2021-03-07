@@ -17,7 +17,7 @@ export default function FlashcardStudyScreen(props) {
   React.useEffect(() => {
     if (props.route.params) {
       const newFlashcard = {
-        set: props.route.params.set,
+        name: props.route.params.name,
         flashcards: props.route.params.flashcards,
       };
       setFlashcardSet({ ...newFlashcard });
@@ -52,7 +52,7 @@ export default function FlashcardStudyScreen(props) {
   return (
     <View style={styles.container}>
       <View style={styles.headerSection}>
-        <Text style={styles.header}>{flashcardSet.set}</Text>
+        <Text style={styles.header}>{flashcardSet.name}</Text>
       </View>
       <View style={styles.mainSection}>
         <ScrollView

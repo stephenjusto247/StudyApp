@@ -33,7 +33,7 @@ export default function FlashcardScreen(props) {
       else if(props.route.params.lastAction === 'edit' || props.route.params.lastAction === 'delete'){
         let flashcardSets_ = [...flashcardSets];
         for (let i = 0; i < flashcardSets_.length; i++){
-          if (flashcardSets_[i].set === props.route.params.set){
+          if (flashcardSets_[i].name === props.route.params.name){
             flashcardSets_[i].flashcards = props.route.params.flashcards;
             break;
           }
@@ -47,12 +47,12 @@ export default function FlashcardScreen(props) {
           let flashcardSets_ = [...flashcardSets];
           let newFlashcardSet = true;
           const flashcardSet = {
-            set: props.route.params.set,
+            name: props.route.params.name,
             flashcards: props.route.params.flashcards
           };
           for (let i = 0; i < flashcardSets_.length; i++){
             index = i;
-            if (flashcardSets_[i].set === flashcardSet.set){
+            if (flashcardSets_[i].name === flashcardSet.name){
               flashcardSets_[i].flashcards = props.route.params.flashcards;
               newFlashcardSet = false;
               break;
@@ -67,7 +67,7 @@ export default function FlashcardScreen(props) {
         }
         else{
           let newFlashcardSet = {
-            set: props.route.params.set,
+            name: props.route.params.name,
             flashcards: props.route.params.flashcards,
             index: 0
           }
@@ -117,7 +117,7 @@ export default function FlashcardScreen(props) {
       {flashcardSetsRef.current.map((flashcardSet, index) => (
           <TouchableOpacity style={styles.setBorder} key={index} onPress={()=>{props.navigation.navigate("FlashcardSetScreen", {
               flashcards: flashcardSet.flashcards,
-              set: flashcardSet.set,
+              name: flashcardSet.name,
               delete: false,
               edit: false,
               initial: true,
@@ -125,7 +125,7 @@ export default function FlashcardScreen(props) {
             }
           )}}>
             <Text style={styles.setName}>
-              {flashcardSet.set}
+              {flashcardSet.name}
             </Text>
           </TouchableOpacity>
         ))}

@@ -5,6 +5,7 @@ import Dialog from 'react-native-dialog';
 import colors from '../config/colors.js';
 
 export default function CoursePlannerScreen( props ){
+    const [totalNumberOfUnits, setTotalNumberOfUnits] = useState(0);
     const [dialogVisibility, setDialogVisibility] = useState(false);
     const [dialogPrompt, setDialogPrompt_] = useState('');
     const [semesterToDelete, setSemesterToDelete] = useState('');
@@ -287,6 +288,7 @@ const styles = StyleSheet.create({
         paddingRight: 10
     },
     bottomSection: {
+        flexDirection: 'row',
         alignItems: 'flex-end'
     },  
     container: {

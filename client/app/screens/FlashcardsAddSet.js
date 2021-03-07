@@ -8,7 +8,7 @@ export default function FlashcardScreen(props) {
   function handleSubmit() {
     if (flashcardSet != "") {
       const newFlashcardSet = {
-        set: flashcardSet,
+        name: flashcardSet,
         flashcards: [{}],
         deleteSet: false
       };

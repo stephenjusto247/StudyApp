@@ -19,7 +19,7 @@ export default function FlashcardsStack(props) {
       if (props.route.params.delete){
         setFlashcardSet({
           flashcards : flashcardSet.flashcards.filter((flashcard, index) => index !== props.route.params.index),
-          set: flashcardSet.set
+          name: flashcardSet.name
         });
         setLastAction('delete');
       }
@@ -29,12 +29,12 @@ export default function FlashcardsStack(props) {
           answer: props.route.params.answer,
           question: props.route.params.question
         };
-        setFlashcardSet({flashcards: flashcards_, set: flashcardSet.set});
+        setFlashcardSet({flashcards: flashcards_, name: flashcardSet.name});
         setLastAction('edit');
       }
       else{
         const newFlashcard = {
-          set: props.route.params.set,
+          name: props.route.params.name,
           flashcards: props.route.params.flashcards
         };
         setFlashcardSet(newFlashcard);
@@ -63,7 +63,7 @@ export default function FlashcardsStack(props) {
     <View style={styles.container}>
       <View style={styles.headerSection}>
         <Text style={styles.header}>
-          {flashcardSet.set}
+          {flashcardSet.name}
         </Text>
       </View> 
       <ScrollView style={styles.mainSection}>
@@ -74,7 +74,7 @@ export default function FlashcardsStack(props) {
                 props.navigation.navigate('FlashcardEdit', {
                   question: entry.question, 
                   answer: entry.answer,
-                  set: flashcardSet.set,
+                  name: flashcardSet.name,
                   index: index})}
               >
                 <View style={styles.flashcard}>
@@ -95,7 +95,7 @@ export default function FlashcardsStack(props) {
           style={styles.back}
           onPress={() => {
             props.navigation.navigate("Flashcards", {
-              set: flashcardSet.set,
+              name: flashcardSet.name,
               flashcards: flashcardSet.flashcards,
               lastAction: lastAction,
               deleteSet: false
@@ -118,7 +118,7 @@ export default function FlashcardsStack(props) {
           onPress={() => {
             props.navigation.navigate("AddFlashcards", {
               flashcards: flashcardSet.flashcards,
-              set: flashcardSet.set,
+              name: flashcardSet.name,
               deleteSet: false
             });
           }}
@@ -130,7 +130,7 @@ export default function FlashcardsStack(props) {
         <TouchableOpacity 
           style={styles.delete}
           onPress={()=>{
-            setDialogPrompt(flashcardSetRef.current.set);
+            setDialogPrompt(flashcardSetRef.current.name);
             setDialogVisiblity(true);
           }}>
           <Text style={styles.deleteText}>Delete</Text>
