@@ -81,6 +81,7 @@ export default function FlashcardScreen(props) {
 
   async function storeData(value){
     try{
+      console.log(value);
       const serializedValue = JSON.stringify(value);
       await AsyncStorage.setItem('flashcardsScreen', serializedValue);
     } catch(e){
