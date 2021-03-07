@@ -47,14 +47,9 @@ export default function LoginScreen({navigation}){
                 </View>
                 <View style={styles.bottomSection}>
                     <LinearGradient start={{x: .5, y: 1}} end={{x: .5, y: 0}} colors={['#c7a9c2', '#fff']} style={styles.linearGradient}>
-                        <Text 
-                            style={styles.signupText}
-                            onPress={() => {
-                                navigation.navigate('Signup')
-                            }}
-                        >
-                            Signup
-                        </Text>
+                        <TouchableOpacity onPress={() => {navigation.navigate('Signup')}}>
+                            <Text style={styles.signupText}>Sign up</Text>
+                        </TouchableOpacity>
                     </LinearGradient>
                 </View>
             </View>
