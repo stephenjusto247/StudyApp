@@ -1,10 +1,12 @@
 import React, {useState, useEffect, useRef} from "react";
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
+import Dialog from 'react-native-dialog';
 import colors from '../config/colors.js';
 
 export default function FlashcardsStack(props) {
   const [lastAction, setLastAction] = useState('initial');
   const [flashcardSet, setFlashcardSet_] = useState({});
+  const [dialogPrompt, setDialogPrompt_] = useState('');
   const flashcardSetRef = useRef(flashcardSet);
   const setFlashcardSet = (data) => {
     flashcardSetRef.current = data;
@@ -41,6 +43,10 @@ export default function FlashcardsStack(props) {
       }
     }
   }, [props.route.params]);
+
+  function setDialogPrompt(set){
+    setDialogPrompt_('Are you sure you want to delete the "'+set+'" flashcard set?');
+}
 
   return (
     <View style={styles.container}>

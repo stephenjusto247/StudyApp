@@ -36,10 +36,7 @@ export default function FlashcardStudyScreen(props) {
               <Text style={styles.header}>{show ? 'Answer' : 'Question'}</Text>
             </View>
             <ScrollView contentContainerStyle={styles.card}>
-              <Text style={styles.cardText}>
-                {entry.question}
-                {show ? entry.answer : null}
-              </Text>
+              {show ? (<Text style={styles.cardText}>{entry.answer}</Text>) : <Text style={styles.cardText}>{entry.question}</Text>}
             </ScrollView>
             <TouchableOpacity style={styles.button} onPress={() => setShow(!show)}>
               <Text style={styles.buttonText}>
