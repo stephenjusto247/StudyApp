@@ -142,9 +142,9 @@ export default function FlashcardScreen(props) {
 
 const styles = StyleSheet.create({
   bottomSection: {
-    flex: .2,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
+    flex: .3333,
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingRight: 10,
     paddingBottom: 10
   },
@@ -162,11 +162,12 @@ const styles = StyleSheet.create({
     fontSize: 30
   },
   headerSection: {
+    flex: .3333,
     justifyContent: 'center',
     alignItems: 'center'
   },
   mainSection: {
-    flex: .8
+    flex: .3333
   },
   setBorder: {
     borderColor: colors.paleSilver,

@@ -262,7 +262,7 @@ export default function CoursePlannerScreen( props ){
                             props.navigation.navigate('CoursePlannerAdd')
                         }}
                     >
-                    <Text style={styles.addSemester} >Add</Text>
+                    <Text style={styles.addSemester} >Add Course</Text>
                 </TouchableOpacity>
             </View>
             <Dialog.Container visible={dialogVisibility}>
@@ -285,11 +285,11 @@ const styles = StyleSheet.create({
     addSemester: {
         fontSize: 18,
         fontWeight: 'bold',
-        paddingRight: 10
+        paddingRight: 10,
+        paddingBottom: 15
     },
     bottomSection: {
-        flexDirection: 'row',
-        alignItems: 'flex-end'
+        alignItems: 'center',
     },  
     container: {
         flex: 1,

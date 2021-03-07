@@ -5,8 +5,8 @@ import colors from '../config/colors';
 
 export default function AccountScreen( {navigation} ){
 
-    const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
 
     useEffect(() => {
         async function fetchData() {
@@ -43,12 +43,12 @@ export default function AccountScreen( {navigation} ){
 
             <View style={styles.mainSection}>
                 <View>
-                    <Text>
+                    <Text style={styles.main}>
                         Name: {name}
                     </Text>
                 </View>
                 <View>
-                    <Text>
+                    <Text style={styles.main}>
                         Email: {email}
                     </Text>
                 </View>
@@ -72,24 +72,28 @@ export default function AccountScreen( {navigation} ){
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff'
+      backgroundColor: '#fff',
+      paddingTop: '15%'
     },
     header: {
-        flex: .10,
+        flex: .3333,
         alignSelf: 'center',
         paddingTop: '15%',
     },
+    main: {
+        fontWeight: 'bold',
+        fontSize: 18
+    },
     mainSection: {
-        flex: .70,
+        flex: .3333,
         alignSelf: 'center',
     },
     logout: {
-        flex: .05,
-        alignSelf: 'center',
+        flex: .3333,
+        alignSelf: 'center'
     },
-
     titleText: {
-        color: 'black',
+        color: colors.black,
         fontWeight: 'bold',
         fontSize: 30,
     },
@@ -105,6 +109,6 @@ const styles = StyleSheet.create({
     button: {
         fontWeight: 'bold',
         fontSize: 20,
-        color: colors.dimGray,
+        color: colors.paleSilver,
     },
 });
