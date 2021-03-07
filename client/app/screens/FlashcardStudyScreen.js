@@ -30,23 +30,22 @@ export default function FlashcardStudyScreen(props) {
         return (
           <View
             key={index}
-            style={styles.flashcard}>
-            <Text
-              style={{
-                fontSize: 25,
-                padding: 15,
-                color: "black",
-                textAlign: "center",
-              }}
-            >
-              {entry.question}
-
-              {show ? entry.answer : null}
-              <Button
-                title="Show/Hide Answer"
-                onPress={() => setShow(!show)}
-              ></Button>
-            </Text>
+            style={styles.flashcard}
+          >
+            <View>
+              <Text style={styles.header}>{show ? 'Answer' : 'Question'}</Text>
+            </View>
+            <ScrollView contentContainerStyle={styles.card}>
+              <Text style={styles.cardText}>
+                {entry.question}
+                {show ? entry.answer : null}
+              </Text>
+            </ScrollView>
+            <TouchableOpacity style={styles.button} onPress={() => setShow(!show)}>
+              <Text style={styles.buttonText}>
+                {show ? 'Hide Answer' : 'Show Answer'}
+              </Text>
+            </TouchableOpacity>
           </View>
         );
       });
@@ -98,6 +97,30 @@ const styles= StyleSheet.create({
     flex: .25,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  button: {
+    alignItems: 'center',
+    borderColor: colors.paleSilver,
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 45,
+    width: 175
+  },
+  buttonText: {
+    color: colors.paleSilver,
+    fontWeight: 'bold',
+    fontSize: 18
+  },
+  card: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  cardText: {
+    fontSize: 25,
+    color: "black"
   },
   container: {
     flex: 1,
