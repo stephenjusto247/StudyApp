@@ -1,20 +1,43 @@
 import React from 'react';
-import { StyleSheet, Keyboard, Text, View, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { 
+        StyleSheet, Text, View, TouchableOpacity, 
+        TouchableWithoutFeedback, Keyboard, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import colors from '../config/colors.js';
 
-export default function LoginScreen({navigation}){
+export default function SignUpScreen( {navigation} ){
+    const [fullNameInput, setFullNameInput] = React.useState('');
+    const [universityNameInput, setUniversityNameInput] = React.useState('');
     const [usernameInput, setUsernameInput] = React.useState('');
     const [passwordInput, setPasswordInput] = React.useState('');
 
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
-                <StatusBar barStyle='dark-content'/>
-                <View style ={styles.headerSection}>
+                <View style={styles.headerSection}>
                     <Text style={styles.title}>StudyApp</Text>
                 </View>
                 <View style={styles.middleSection}>
+                    <TextInput 
+                        style={styles.textInput}
+                        onChangeText={text => setFullNameInput(text)}
+                        value={fullNameInput}
+                        autoCompleteType='name'
+                        autoCorrect={false}
+                        keyboardAppearance='dark'
+                        placeholder='Full Name'
+                        textContentType='none'
+                    />
+                    <TextInput 
+                        style={styles.textInput}
+                        onChangeText={text => setUniversityNameInput(text)}
+                        value={universityNameInput}
+                        autoCompleteType='name'
+                        autoCorrect={false}
+                        keyboardAppearance='dark'
+                        placeholder='University Name'
+                        textContentType='none'
+                    />
                     <TextInput 
                         style={styles.textInput}
                         onChangeText={text => setUsernameInput(text)}
@@ -36,25 +59,15 @@ export default function LoginScreen({navigation}){
                         secureTextEntry={true}
                         textContentType='password'
                     />
-                    <TouchableOpacity
-                        style={styles.loginButton}
-                        onPress={() => {
-                            navigation.navigate('Main')
-                        }}
-                    >
-                        <Text style={styles.loginButtonText}>Login</Text>
+                    <TouchableOpacity style={styles.signUpButton}>
+                        <Text style={styles.signUpButtonText}>Sign up</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.bottomSection}>
                     <LinearGradient start={{x: .5, y: 1}} end={{x: .5, y: 0}} colors={['#c7a9c2', '#fff']} style={styles.linearGradient}>
-                        <Text 
-                            style={styles.signupText}
-                            onPress={() => {
-                                navigation.navigate('Signup')
-                            }}
-                        >
-                            Signup
-                        </Text>
+                        <TouchableOpacity onPress={()=>{navigation.navigate('Login')}}>
+                            <Text style={styles.cancelText}>Cancel</Text>
+                        </TouchableOpacity>
                     </LinearGradient>
                 </View>
             </View>
@@ -62,15 +75,14 @@ export default function LoginScreen({navigation}){
     )
 }
 
-const styles = StyleSheet.create({
-    linearGradient: {
-        flex: 1,
-        width: '100%',
-        alignItems: 'center'
-    },  
+const styles = StyleSheet.create({ 
     bottomSection: {
         flex: .3333,
         alignItems: 'center'
+    },
+    cancelText: {
+        color: colors.paleSilver,
+        fontWeight: 'bold'
     },  
     container: {
         backgroundColor: colors.white,
@@ -82,7 +94,17 @@ const styles = StyleSheet.create({
         borderBottomColor: colors.black,
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
-    loginButton: {
+    linearGradient: {
+        flex: 1,
+        width: '100%',
+        alignItems: 'center'
+    }, 
+    middleSection: {
+        flex: .3333,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    signUpButton: {
         alignItems: 'center',
         borderColor: colors.paleSilver,
         borderWidth: 2,
@@ -90,18 +112,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10,
         height: 45,
-        width: 200
+        width: 300
     },
-    loginButtonText: {
-        color: colors.paleSilver,
-        fontWeight: 'bold'
-    },
-    middleSection: {
-        flex: .3333,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    signupText: {
+    signUpButtonText: {
         color: colors.paleSilver,
         fontWeight: 'bold'
     },
