@@ -99,7 +99,11 @@ export default function EditCourses( props ){
                     required
                 />
 
-                <Button title={timeTitle} onPress={showTimePicker} />
+                <Button 
+                    title={timeTitle} 
+                    
+                    onPress={showTimePicker} 
+                />
                 <DateTimePickerModal
                     isVisible={isTimePickerVisible}
                     mode='time'
@@ -109,7 +113,7 @@ export default function EditCourses( props ){
             </View>
 
             <View style={styles.middleSection}>
-                <Text>Add Reminder</Text>
+                <Text style={styles.reminderText}>Add Reminder</Text>
                 <Switch
                     onValueChange={() => setReminderEnabled(previousState => !previousState)}
                     value={reminderEnabled}
@@ -123,13 +127,7 @@ export default function EditCourses( props ){
                     onSelectionsChange={selectedItems => setSelections(selectedItems)}
                 />
             </View>
-            <View>
-                <TouchableOpacity
-                    onPress={() => {props.navigation.navigate('CoursesScreen')}}
-                >
-                    <Text>Back</Text>
-                </TouchableOpacity>
-
+            <View style={styles.buttons}>
                 {mode === 0 ? 
                     <TouchableOpacity>
                         <Text style={styles.button} onPress={handleAdd}>Add</Text>
@@ -139,6 +137,12 @@ export default function EditCourses( props ){
                         <Text style={styles.button} onPress={handleEdit}>Edit</Text>
                     </TouchableOpacity>
                 }
+                <TouchableOpacity
+                    onPress={() => {props.navigation.navigate('CoursesScreen')}}
+                >
+                    <Text style={styles.button}>Back</Text>
+                </TouchableOpacity>
+
             </View>
 
                 
@@ -154,6 +158,7 @@ const styles = StyleSheet.create({
     },
     header: {
         alignSelf: 'center',
+        paddingBottom: 10
     },
     title: {
         color: 'black',
@@ -168,13 +173,33 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,
+        marginBottom: 5,
+    },
+    reminderText: {
+        fontSize: 20,
+        paddingRight: 10,
+    },
+    button:{
+        fontWeight: 'bold',
+        fontSize: 20,
+        padding: 10
     },
     firstSection: {
-        justifyContent: 'center',
+        alignSelf: 'center',
+        flex: .2
     },
     middleSection: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        flex: .1
+
     },
     bottomSection: {
+        flex: .8
+    },
+    buttons: {
+        flex: .25,
+        alignItems: 'center'
     }
 
 });
