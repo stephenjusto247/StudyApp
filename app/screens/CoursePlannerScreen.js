@@ -1,56 +1,231 @@
 import React from 'react';
-import { Alert, StyleSheet, Text, View, Button, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import Dialog from 'react-native-dialog';
 import colors from '../config/colors.js';
 
 export default function CoursePlannerScreen( props ){
     const [courseEntries, setCourseEntries] = React.useState([]);
+    const [dialogVisibility, setDialogVisibility] = React.useState(false);
+    const [dialogPrompt, setDialogPrompt_] = React.useState('');
+    const [semesterToDelete, setSemesterToDelete] = React.useState('');
+    const [indexToDelete, setIndexToDelete] = React.useState(0);
 
     React.useEffect(()=>{
         if (props.route.params){
-            let courseEntries_ = [...courseEntries];
-            const newEntry = {
-                name: props.route.params.name,
-                number: props.route.params.number,
-                units: props.route.params.units
-            };
-            courseEntries_.push(newEntry);
-            setCourseEntries([...courseEntries_]);
+            if (props.route.params.index === undefined){
+                if (courseEntries.length > 0){
+                    let courseEntries_ = [...courseEntries];
+                    let newEntry = true;
+                    const courseEntry = {
+                        semester: props.route.params.semester,
+                        entries: props.route.params.entries
+                    }
+                    for (let i = 0; i < courseEntries_.length; i++){
+                        if (courseEntries_[i].semester === courseEntry.semester){
+                            courseEntries_[i].entries.push({
+                                name: courseEntry.entries[0].name,
+                                number: courseEntry.entries[0].number,
+                                units: courseEntry.entries[0].units
+                            })
+                            newEntry = false;
+                            break;
+                        }
+                    }
+                    if (newEntry){
+                        courseEntries_.push(courseEntry);
+                        courseEntries_ = sortCourseEntries(courseEntries_);
+                    }
+                    setCourseEntries([...courseEntries_]);
+                }
+                else {
+                    const courseEntry = {
+                        semester: props.route.params.semester,
+                        entries: props.route.params.entries
+                    }
+                    setCourseEntries([courseEntry]);
+                }
+            }
+            else{
+                let courseEntries_ = [...courseEntries];
+                const courseEntry = {
+                    semester: props.route.params.semester,
+                    entries: props.route.params.entries
+                }
+                for (let i = 0; i < courseEntries_.length; i++){
+                    if (courseEntries_[i].semester === props.route.params.formerSemester){
+                        courseEntries_[i].entries.splice(props.route.params.index, 1);
+                        if (courseEntries_[i].entries.length <= 0) courseEntries_.splice(i, 1);
+                        break;
+                    }
+                }
+                if (courseEntries_.length > 0){
+                    let notPushed = true;
+                    for (let i = 0; i < courseEntries_.length; i++){
+                        if (courseEntries_[i].semester === props.route.params.semester){
+                            courseEntries_[i].entries.push({
+                                name: courseEntry.entries[0].name,
+                                number: courseEntry.entries[0].number,
+                                units: courseEntry.entries[0].units
+                            })
+                            notPushed = false;
+                            break;
+                        }
+                    }
+                    if (notPushed){
+                        courseEntries_.push(courseEntry);
+                    }
+                }
+                else courseEntries_.push(courseEntry);
+                setCourseEntries(courseEntries_);
+            }
         }
     }, [props.route.params]);
 
+    function sortCourseEntries(courseEntries_){
+        let sortedEntries = [];
+        for (let i = 0; i < courseEntries_.length; i++){
+            let minimumIndex = i;
+            let minimum = courseEntries_[i];
+            let semester = courseEntries_[i].semester.split(' ');
+            let season = semester[0];
+            let year = semester[1];
+            for (let j = i; j < courseEntries_.length; j++){
+                const semester_ = courseEntries_[j].semester.split(' ');
+                const season_ = semester_[0];
+                const year_ = semester_[1];
+                if (year_ < year && j !== minimumIndex){
+                    minimumIndex = j;
+                    minimum = courseEntries_[j];
+                    semester = semester_;
+                    season = season_;
+                    year = year_;
+                }
+                else if (year_ === year && j !== minimumIndex){
+                    // Note: season_ is never ever equal to season if year_ === year!
+                    if (season_ === 'Spring'){
+                        minimumIndex = j;
+                        minimum = courseEntries_[j];
+                        semester = semester_;
+                        season = season_;
+                        year = year_;
+                    }
+                    else if (season_ === 'Summer' && season !== 'Spring'){
+                        minimumIndex = j;
+                        minimum = courseEntries_[j];
+                        semester = semester_;
+                        season = season_;
+                        year = year_;
+                    }
+                }
+            }
+            sortedEntries.push(minimum);
+            courseEntries_.splice(minimumIndex, 1);
+            i = -1;
+        }
+        return sortedEntries;
+    }
+
+    function setDialogPrompt(name, semester){
+        setDialogPrompt_('Are you sure you want to delete "' + name + '" from ' + semester + '?');
+    }
+
+    function handleDelete(){
+        let courseEntries_ = [...courseEntries];
+        for (let i = 0; i < courseEntries_.length; i++){
+            if (courseEntries_[i].semester === semesterToDelete){
+                courseEntries_[i].entries.splice(indexToDelete, 1);
+                if (courseEntries_[i].entries.length <= 0) courseEntries_.splice(i, 1);
+                break;
+            }
+        }
+        setCourseEntries(courseEntries_);
+        setDialogVisibility(false);
+    }
+
+    function hideDialog(){
+        setDialogVisibility(false);
+    }
+
     return(
-        <ScrollView style={styles.container}>
-            <View style={styles.semester}>
-                <Text style={styles.titleText}>
-                    Fall 2021
-                </Text>
-                {courseEntries.map((entry, index) => (
-                    <TouchableOpacity style={styles.courseEntry} key={index}>
-                        <View style={styles.courseEntryNumber}>
-                            <Text style={styles.text}>
-                                {entry.name}
-                            </Text>
-                        </View>
-                        <View style={styles.courseEntryName}>
-                            <Text style={styles.text}>
-                                {entry.number}
-                            </Text>
-                        </View>
-                        <View style={styles.courseEntryUnits}>
-                            <Text style={styles.text}>
-                                {entry.units}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
+        <View style={styles.container}>
+            <View style={styles.headerSection}>
+                <Text style={styles.header}>Course Planner</Text>
+            </View>
+            <ScrollView>
+                {courseEntries.map((courseEntry, index) => (
+                    <View style={styles.semester} key={index}>
+                        <Text style={styles.titleText}>
+                            {courseEntry.semester}
+                        </Text>
+                        {courseEntry.entries.map((entry, index_) => {
+                            return(
+                            <View style={styles.courseEntry} key={index_}>
+                                <View style={styles.courseEntryNumber}>
+                                    <Text style={styles.text}>
+                                        {entry.number}
+                                    </Text>
+                                </View>
+                                <View style={styles.courseEntryName}>
+                                    <Text style={styles.text}>
+                                        {entry.name}
+                                    </Text>
+                                </View>
+                                <View style={styles.courseEntryUnits}>
+                                    <Text style={styles.text}>
+                                        {entry.units}
+                                    </Text>
+                                </View>
+                                <View style={styles.courseEntryEdit}>
+                                    <TouchableOpacity onPress={()=>{
+                                        const semester = courseEntry.semester.split(' ');
+                                        const entryToEdit = {
+                                            season: semester[0],
+                                            year: semester[1],
+                                            name: entry.name,
+                                            number: entry.number,
+                                            units: entry.units,
+                                            index: index_
+                                        };  
+                                        props.navigation.navigate('CoursePlannerAdd', entryToEdit);
+                                    }}>
+                                        <Text style={styles.editText}>
+                                            Edit
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.courseEntryDelete}>
+                                    <TouchableOpacity onPress={() => {
+                                        setDialogPrompt(entry.name, courseEntry.semester);
+                                        setSemesterToDelete(courseEntry.semester);
+                                        setIndexToDelete(index_);
+                                        setDialogVisibility(true);
+                                    }}>
+                                        <Text style={styles.deleteText}>
+                                            Delete
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            )
+                        })}
+                    </View>
                 ))}
+            </ScrollView>
+            <View style={styles.bottomSection}>
                 <TouchableOpacity onPress={() => {
-                        props.navigation.navigate('CoursePlannerAdd')
-                    }}
-                >
-                    <Text style={styles.add}>Add</Text>
+                            props.navigation.navigate('CoursePlannerAdd')
+                        }}
+                    >
+                    <Text style={styles.addSemester} >Add</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+            <Dialog.Container visible={dialogVisibility}>
+                <Dialog.Title>Delete Entry</Dialog.Title>
+                <Dialog.Description>{dialogPrompt}</Dialog.Description>
+                <Dialog.Button label='Cancel' onPress={hideDialog}/>
+                <Dialog.Button label='Delete' onPress={handleDelete}/>
+            </Dialog.Container>
+        </View>
     )
 }
 
@@ -61,9 +236,17 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         paddingRight: 10
     },
+    addSemester: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        paddingRight: 10
+    },
+    bottomSection: {
+        alignItems: 'flex-end'
+    },  
     container: {
         flex: 1,
-        backgroundColor: colors.paleSilver,
+        backgroundColor: colors.white,
         paddingTop: '15%'
     },
     courseEntry: {
@@ -71,8 +254,18 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5
     }, 
+    courseEntryDelete: {
+        flex: .1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    courseEntryEdit: {
+        flex: .1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     courseEntryName: {
-        flex: .5,
+        flex: .45,
         justifyContent: 'center'
     },
     courseEntryNumber: {
@@ -80,10 +273,25 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     courseEntryUnits: {
-        flex: .25,
+        flex: .1,
         justifyContent: 'center',
         alignItems: 'center'
     },
+    deleteText: {
+        fontWeight: 'bold',
+        fontSize: 12
+    },
+    editText: {
+        fontWeight: 'bold'
+    },
+    header: {
+        fontWeight: 'bold',
+        fontSize: 30
+    },
+    headerSection: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },  
     semester: {
         flex: 1,
         backgroundColor: colors.bone
@@ -91,6 +299,14 @@ const styles = StyleSheet.create({
     text: {
         color: 'black',
         fontSize: 16
+    },
+    textInput: {
+        height: 45,
+        width: 300,
+        borderColor: colors.dimGray,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 10
     },
     titleText: {
         color: 'black',

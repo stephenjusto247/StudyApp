@@ -3,17 +3,33 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AccountScreen from './AccountScreen.js';
 import FlashcardsStack from './FlashcardsStack.js';
-import CoursesScreen from './CoursesScreen.js';
+import CoursesStack from './CoursesStack.js';
 import CoursePlannerStack from './CoursePlannerStack.js';
 
 const Tab = createBottomTabNavigator();
 
-export default function MainScreen(){
+export default function MainTabScreen(){
     return(
-        <Tab.Navigator>
+        <Tab.Navigator
+            tabBarOptions={{
+                style: {
+                    height: 90,
+                    display: 'flex',
+                    justifyContent: 'center'
+                },
+                labelStyle: {
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    paddingBottom: 5
+                }
+            }}
+        >
             <Tab.Screen
                 name='Acc'
                 component={AccountScreen}
+                style={{
+                    alignSelf: 'center'
+                }}
             />
             <Tab.Screen
                 name='FC'
@@ -21,7 +37,7 @@ export default function MainScreen(){
             />
             <Tab.Screen
                 name='CS'
-                component={CoursesScreen}
+                component={CoursesStack}
             />
             <Tab.Screen
                 name='CP'

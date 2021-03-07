@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './app/screens/LoginScreen.js';
 import SignupScreen from './app/screens/SignupScreen.js';
-import MainScreen from './app/screens/MainScreen.js';
+import MainTabScreen from './app/screens/MainTabScreen.js';
 
 const Stack = createStackNavigator();
 
@@ -24,7 +24,7 @@ export default function App() {
         />
         <Stack.Screen 
           name="Main"
-          component={MainScreen}
+          component={MainTabScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
