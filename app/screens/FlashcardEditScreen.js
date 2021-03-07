@@ -1,17 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, 
+        TextInput, Keyboard, TouchableWithoutFeedback, 
+        ScrollView, Dimensions } from 'react-native';
 import colors from '../config/colors.js';
 
 export default function FlashcardEditScreen(props){
+    const [question, setQuestion] = useState('');
+    const [answer, setAnswer] = useState('');
+
+    useEffect(()=>{
+        if (props.route.params){
+            setQuestion(props.route.params.question);
+            setAnswer(props.route.params.answer);
+        }
+    }, [props.route.params]);
+
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
                 <View style={styles.headerSection}>
                     <Text style={styles.header}>Edit Flashcard</Text>
                 </View>
-                <View style={styles.mainSection}>
-
-                </View>
+                <ScrollView style={styles.mainSection}>
+                    <View style={styles.flashcard}>
+                        <View style={styles.flashcardQuestion}>
+                            <Text style={styles.label}>Question</Text>
+                            <TextInput 
+                                style={styles.textInput}
+                                onChangeText={text => setQuestion(text)}
+                                value={question}
+                                autoCorrect={false}
+                                keyboardAppearance='dark'
+                                textContentType='none'
+                                multiline={true}
+                            />
+                        </View>
+                        <View style={styles.flashcardAnswer}>
+                            <Text style={styles.label}>Answer</Text>
+                            <TextInput 
+                                style={styles.textInput}
+                                onChangeText={text => setAnswer(text)}
+                                value={answer}
+                                autoCorrect={false}
+                                keyboardAppearance='dark'
+                                textContentType='none'
+                                multiline={true}
+                            />
+                        </View>
+                    </View>
+                </ScrollView>
                 <View style={styles.bottomSection}>
                     <TouchableOpacity style={styles.cancel} onPress={()=>{
                         props.navigation.navigate('FlashcardSetScreen')
@@ -69,6 +106,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: colors.paleSilver
     },
+    flashcard: {
+        flexDirection: 'row'
+    },
     header: {
         fontWeight: 'bold',
         fontSize: 30
@@ -78,7 +118,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    label: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        alignSelf: 'center'
+    },
     mainSection: {
         flex: .3333
+    },
+    textInput: {
+        height: Dimensions.get('window').height / 3,
+        width: Dimensions.get('window').width / 2,
+        borderColor: colors.dimGray,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 10
     }
 });

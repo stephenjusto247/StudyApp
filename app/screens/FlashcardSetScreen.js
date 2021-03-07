@@ -6,12 +6,17 @@ export default function FlashcardsStack(props) {
   const [flashcardSet, setFlashcardSet] = React.useState({});
   React.useEffect(() => {
     if (props.route.params) {
-      const newFlashcard = {
-        set: props.route.params.set,
-        flashcards: props.route.params.flashcards
-      };
-      console.log(newFlashcard);
-      setFlashcardSet({...newFlashcard});
+      if (props.route.params.delete){
+        
+      }
+      else{
+        const newFlashcard = {
+          set: props.route.params.set,
+          flashcards: props.route.params.flashcards
+        };
+        console.log(newFlashcard);
+        setFlashcardSet({...newFlashcard});
+      }
     }
   }, [props.route.params]);
 
