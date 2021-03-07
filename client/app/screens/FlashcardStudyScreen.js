@@ -1,53 +1,82 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
-import colors from "../config/colors.js";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+  ScrollView,
+  Dimensions,
+} from "react-native";
 
 export default function FlashcardStudyScreen(props) {
-  const [flashcards, setFlashcards] = React.useState([]);
+  const [flashcardSet, setFlashcardSet] = React.useState({});
+  const [show, setShow] = React.useState(false);
   React.useEffect(() => {
-    //console.log(props.route.params);
     if (props.route.params) {
-      let flashcards_ = [...flashcards];
       const newFlashcard = {
-        question: props.route.params.question,
-        answer: props.route.params.answer,
+        set: props.route.params.set,
+        flashcards: props.route.params.flashcards,
       };
-      flashcards_.push(newFlashcard);
-      setFlashcards([...flashcards_]);
+      setFlashcardSet({ ...newFlashcard });
     }
   }, [props.route.params]);
+
+  let screenWidth = Dimensions.get("window").width;
+  let screenHeight = Dimensions.get("window").height;
+
+  const list = () => {
+    if (flashcardSet.flashcards !== undefined) {
+      return flashcardSet.flashcards.map((entry, index) => {
+        return (
+          <View
+            key={index}
+            style={{
+              backgroundColor: "#fff",
+              flex: 1,
+              width: screenWidth,
+              height: screenHeight,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 25,
+                padding: 15,
+                color: "black",
+                textAlign: "center",
+              }}
+            >
+              {entry.question}
+
+              {show ? entry.answer : null}
+              <Button
+                title="Show/Hide Answer"
+                onPress={() => setShow(!show)}
+              ></Button>
+              <Button
+                title="Back"
+                onPress={() => {
+                  props.navigation.navigate("FlashcardSetScreen", flashcardSet);
+                }}
+              />
+            </Text>
+          </View>
+        );
+      });
+    }
+  };
+
   return (
-    <View>
-      <Text>
-        StudyScreen
-        {flashcards.map((entry, index) => (
-          <TouchableOpacity key={index}>
-            <View>
-              <Text>{entry.question}</Text>
-            </View>
-            <View>
-              <Text>{entry.answer}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </Text>
-    </View>
+    <ScrollView
+      horizontal={true}
+      pagingEnabled={true}
+      onMomentumScrollBegin={() => {
+        setShow(false);
+      }}
+    >
+      {list()}
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.paleSilver,
-    paddingTop: "15%",
-  },
-  question: {
-    flex: 0.5,
-    justifyContent: "center",
-  },
-  courseEntry: {
-    flexDirection: "row",
-    paddingTop: 5,
-    paddingBottom: 5,
-  },
-});

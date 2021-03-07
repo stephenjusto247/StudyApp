@@ -5,7 +5,6 @@ export default {
     languidLavender: '#E0D3DE',
     lightGray: '#f7f7f7',
     paleSilver: '#CBB8A9',
-    red: '#b5212f',
     sage: '#B3B492',
     white: '#fff'
 }

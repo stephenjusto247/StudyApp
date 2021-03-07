@@ -21,14 +21,9 @@ export default function Flashcards(props) {
       };
       flashcards.push(newFlashcard);
       flashcardSet.flashcards = flashcards;
-      //console.log('adding: ');
-      //console.log(flashcards);
-      props.navigation.navigate("FlashcardSetScreen", {
-        delete: false,
-        edit: false,
-        set: flashcardSet.set,
-        flashcards: flashcardSet.flashcards
-      });
+      console.log('adding: ');
+      console.log(flashcards);
+      props.navigation.navigate("FlashcardSetScreen", flashcardSet);
     }
   }
 
@@ -138,7 +133,7 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   textInput: {
-    height: 200,
+    height: Dimensions.get('window').height / 3,
     width: Dimensions.get('window').width / 2,
     borderColor: colors.dimGray,
     borderWidth: 1,
