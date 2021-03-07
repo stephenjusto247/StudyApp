@@ -8,7 +8,7 @@ import colors from '../config/colors.js';
 export default function SignUpScreen( {navigation} ){
     const [fullNameInput, setFullNameInput] = React.useState('');
     const [universityNameInput, setUniversityNameInput] = React.useState('');
-    const [usernameInput, setUsernameInput] = React.useState('');
+    const [emailInput, setEmailInput] = React.useState('');
     const [passwordInput, setPasswordInput] = React.useState('');
 
     return(
@@ -40,13 +40,13 @@ export default function SignUpScreen( {navigation} ){
                     />
                     <TextInput 
                         style={styles.textInput}
-                        onChangeText={text => setUsernameInput(text)}
-                        value={usernameInput}
-                        autoCompleteType='username'
+                        onChangeText={text => setEmailInput(text)}
+                        value={emailInput}
+                        autoCompleteType='email'
                         autoCorrect={false}
                         keyboardAppearance='dark'
-                        placeholder='Username'
-                        textContentType='username'
+                        placeholder='Email'
+                        textContentType='emailAddress'
                     />
                     <TextInput 
                         style={styles.textInput}

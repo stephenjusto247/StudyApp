@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Alert, StyleSheet, Text, View, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import colors from '../config/colors';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CoursesScreen( props ){
-    const [courses, setCourses] = React.useState([]);
-    const[reminderEnabled, setReminder] = React.useState(false);
-    const [indexToDelete, setIndexToDelete] = React.useState(0);
-    const [indexToChangeRemind, setIndexToChangeRemind] = React.useState(false);
+    const [reminderEnabled, setReminder] = useState(false);
+    const [indexToDelete, setIndexToDelete] = useState(0);
+    const [indexToChangeRemind, setIndexToChangeRemind] = useState(false);
+    const [courses, setCourses_] = useState([]);
+    const coursesRef = useRef(courses);
+    const setCourses = (data) => {
+        coursesRef.current = data;
+        setCourses_(data);
+    }
 
-    React.useEffect(()=>{
+    useEffect(()=>{
+        readData();
+    }, []);
+
+    useEffect(()=>{
         if (props.route.params){
             if(props.route.params.index === undefined){
                 let courses_ = [...courses];
@@ -22,6 +32,7 @@ export default function CoursesScreen( props ){
                 };
                 courses_.push(newEntry);
                 setCourses([...courses_]);
+                storeData(coursesRef.current);
             }
             else{
                 let courses_ = [...courses];
@@ -34,6 +45,7 @@ export default function CoursesScreen( props ){
                 };
                 courses_.splice(props.route.index, 1, newEntry);
                 setCourses([...courses_]);
+                storeData(coursesRef.current);
             }
         }
     }, [props.route.params]);
@@ -74,9 +86,37 @@ export default function CoursesScreen( props ){
     }
 
     function deleteCourse(){
-        let courses_ = [...courses];
-        courses_.splice(indexToDelete, 1);
-        setCourses(courses_);
+        if (courses.length > 0)
+            setCourses(courses.filter((course, index) => index !== indexToDelete));
+        else setCourses([]);
+        storeData(coursesRef.current);
+    }
+
+    async function readData(){
+        let data;
+        try{
+            data = await AsyncStorage.getItem('editCourses');
+        } catch(e){
+            console.log(e);
+        }
+        if (data !== null){
+            try{
+                data.JSON.parse(data);
+                if (Array.isArray(data)) setCourses([...data]);
+                else setCourse([data]);
+            } catch(e){
+                console.log(e);
+            }
+        }
+    }
+
+    async function storeData(value){
+        try{
+            const serializedValue = JSON.stringify(value);
+            await AsyncStorage.setItem('coursesScreen', serializedValue);
+        } catch(e){
+            console.log(e);
+        }
     }
 
     return(
