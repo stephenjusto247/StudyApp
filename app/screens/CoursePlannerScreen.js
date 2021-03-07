@@ -173,7 +173,6 @@ export default function CoursePlannerScreen( props ){
         let data;
         try{
             data = await AsyncStorage.getItem('coursePlanner');
-            console.log('this is da data: ' + data);
         } catch(e){
             console.log(e);
         }
