@@ -23,7 +23,8 @@ let userSchema = new mongoose.Schema({
     min: 7,
     max: 12
   },
-  flashcardSets: [String]
+  flashcardSets: [String],
+  coursePlanner: String
 });
 
 module.exports = mongoose.model("users", userSchema);

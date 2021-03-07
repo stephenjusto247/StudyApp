@@ -1,5 +1,17 @@
 const Joi = require('@hapi/joi');
 
+const coursePlannerValidation = (data) => {
+  const schema = Joi.object({
+    semester: Joi.string().required(),
+    courseEntries: Joi.array().items(Joi.object({
+      courseNumber: Joi.string().required(),
+      courseName: Joi.string().required(),
+      units: Joi.string().required()
+    }))
+  });
+  return schema.validate(data);
+};
+
 const createFlashcardSetValidation = (data) => {
   const schema = Joi.object({
     name: Joi.string().max(64).required(),
@@ -76,6 +88,7 @@ const deleteAccountValidation = (data) => {
   return schema.validate(data);
 };
 
+module.exports.coursePlannerValidation = coursePlannerValidation;
 module.exports.createFlashcardSetValidation = createFlashcardSetValidation;
 module.exports.deleteFlashcardSetValidation = deleteFlashcardSetValidation;
 module.exports.updateFlashcardValidation = updateFlashcardValidation;
