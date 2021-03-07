@@ -3,8 +3,6 @@ import { StyleSheet, View, Text, TouchableOpacity, TextInput, Keyboard, Touchabl
 import colors from '../config/colors.js';
 
 export default function FlashcardEditScreen(props){
-    
-
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
