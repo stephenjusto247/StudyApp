@@ -1,0 +1,429 @@
+{
+  "server": [
+    { 
+      "url": "https://sfhacks-studying-app.herokuapp.com",
+      "description": "Production backend server"
+    }
+  ],
+  "paths": 
+  [
+    {
+      "/auth": 
+      [
+        {
+          "/register": 
+          {
+            "method": "POST",
+            "requestBody": 
+            {
+              "name": 
+              {
+                "type": "string",
+                "required": true,
+                "max": 32
+              },
+              "email": 
+              {
+                "type": "email",
+                "required": true,
+                "max": 32
+              },
+              "password": 
+              {
+                "type": "string",
+                "required": true,
+                "min": 10,
+                "max": 32
+              },
+              "phone": 
+              {
+                "type": "string",
+                "required": true,
+                "min": 7,
+                "max": 12
+              }
+            },
+            "response":
+            {
+              "token": 
+              {
+                "type": "string",
+                "summary": "jsonwebtoken that needs to be passed as header 'Authorization' on every request"
+              }
+            }
+          },
+          "/login": 
+          {
+            "method": "POST",
+            "requestBody": 
+            {
+              "email": 
+              {
+                "type": "email",
+                "required": true,
+                "max": 32
+              },
+              "password": 
+              {
+                "type": "string",
+                "required": true,
+                "min": 10,
+                "max": 32
+              }
+            },
+            "response":
+            {
+              "token": 
+              {
+                "type": "string",
+                "summary": "jsonwebtoken that needs to be passed as header 'Authorization' on every request"
+              }
+            }
+          },
+          "/delete-account": 
+          {
+            "method": "DELETE",
+            "requestBody": 
+            {
+              "name": 
+              {
+                "type": "string",
+                "required": true,
+                "max": 32
+              },
+              "email": 
+              {
+                "type": "email",
+                "required": true,
+                "max": 32
+              },
+              "password": 
+              {
+                "type": "string",
+                "required": true,
+                "min": 10,
+                "max": 32
+              }
+            },
+            "response":
+            {
+              "message": "Success"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "/flashcards": 
+      [
+        {
+          "/create-set": 
+          {
+            "method": "POST",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "requestBody": 
+            {
+              "name": 
+              {
+                "type": "string",
+                "required": true,
+                "max": 32
+              },
+              "flashcards": 
+              [
+                {
+                  "question": 
+                  {
+                    "type": "string",
+                    "required": true,
+                    "max": 128
+                  },
+                  "answer": 
+                  {
+                    "type": "string",
+                    "required": true,
+                    "max": 128
+                  },
+                  "hint": 
+                  {
+                    "type": "string",
+                    "max": 128
+                  }
+                }
+              ]
+            },
+            "response":
+            {
+              "setID": 
+              {
+                "type": "string",
+                "summary": "Object ID of the set"
+              },
+              "flashcardIDs": 
+              [
+                {
+                  "type": "string",
+                  "summary": "Object ID of the flashcard"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "/get-set": 
+          {
+            "method": "GET",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "requestBody": 
+            {
+              "setID": 
+              {
+                "type": "string",
+                "required": true,
+                "summary": "Object ID of the set"
+              }
+            },
+            "response":
+            {
+              "flashcardIDs": 
+              [
+                {
+                  "type": "string",
+                  "summary": "Object ID of the flashcard"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "/get-user-set": 
+          {
+            "method": "POST",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "response":
+            {
+              "sets": 
+              {
+                "setID": 
+                {
+                  "type": "string",
+                  "summary": "Object ID of the set"
+                },
+                "flashcardIDs": 
+                [
+                  {
+                    "type": "string",
+                    "summary": "Object ID of the flashcard"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "/add-set": 
+          {
+            "method": "POST",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "requestBody": 
+            {
+              "setID": 
+              {
+                "type": "string",
+                "required": true,
+                "summary": "Object ID of the set"
+              }
+            },
+            "response":
+            {
+              "flashcards": 
+              [
+                {
+                  "_id": 
+                  {
+                    "type": "string",
+                    "summary": "Object id of flashcard"
+                  },
+                  "question": 
+                  {
+                    "type": "string",
+                    "required": true,
+                    "max": 128
+                  },
+                  "answer": 
+                  {
+                    "type": "string",
+                    "required": true,
+                    "max": 128
+                  },
+                  "hint": 
+                  {
+                    "type": "string",
+                    "max": 128
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "/delete-set": 
+          {
+            "method": "DELETE",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "requestBody": 
+            {
+              "setID": 
+              {
+                "type": "string",
+                "required": true,
+                "summary": "Object ID of the set"
+              }
+            },
+            "response":
+            {
+              "messagse": "Success" 
+            }
+            
+          }
+        },
+        {
+          "/update-flashcard": 
+          {
+            "method": "POST",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "requestBody": 
+            {
+              "setID": 
+              {
+                "type": "string",
+                "required": true,
+                "summary": "Object ID of the set"
+              },
+              "flashcardID": {
+                "type": "string",
+                "summary": "Object id of flashcard"
+              },
+              "flashcard": 
+              {
+                "question": 
+                {
+                  "type": "string",
+                  "required": true,
+                  "max": 128
+                },
+                "answer": 
+                {
+                  "type": "string",
+                  "required": true,
+                  "max": 128
+                },
+                "hint": 
+                {
+                  "type": "string",
+                  "max": 128
+                }
+              }
+            },
+            "response":
+            {
+              "message": "Success"
+            }
+          }
+        },
+        {
+          "/add-flashcard": 
+          {
+            "method": "POST",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "requestBody": 
+            {
+              "setID": 
+              {
+                "type": "string",
+                "required": true,
+                "summary": "Object ID of the set"
+              },
+              "flashcard": 
+              {
+                "question": 
+                {
+                  "type": "string",
+                  "required": true,
+                  "max": 128
+                },
+                "answer": 
+                {
+                  "type": "string",
+                  "required": true,
+                  "max": 128
+                },
+                "hint": 
+                {
+                  "type": "string",
+                  "max": 128
+                }
+              }
+            },
+            "response":
+            {
+              "id": {
+                "type": "string",
+                "required": true,
+                "summary": "Object ID of the flashcard"
+              }
+            }
+          }
+        },
+        {
+          "/delete-flashcard": 
+          {
+            "method": "DELETE",
+            "headers": 
+            {
+              "Authorization": "token"
+            },
+            "requestBody": 
+            {
+              "setID": 
+              {
+                "type": "string",
+                "required": true,
+                "summary": "Object ID of the set"
+              },
+              "flashcardID": {
+                "type": "string",
+                "summary": "Object ID of the flashcard"
+              }
+            },
+            "response":
+            {
+              "message": "Success"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

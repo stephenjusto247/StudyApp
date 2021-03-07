@@ -4,7 +4,7 @@ const server = express();
 const serverPort = process.env.PORT || 5000;
 
 const mongoose = require('mongoose');
-const mongodburi = process.env.MONGODB_URI || 'mongodb://localhost/studying-app';
+const mongodburi = process.env.mongodburi || 'mongodb://localhost/studying-app';
 
 // Connect to Database
 mongoose.connect(mongodburi,  {
