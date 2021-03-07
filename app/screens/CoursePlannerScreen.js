@@ -29,14 +29,14 @@ export default function CoursePlannerScreen( props ){
                     const courseEntry = {
                         semester: props.route.params.semester,
                         entries: props.route.params.entries
-                    }
+                    };
                     for (let i = 0; i < courseEntries_.length; i++){
                         if (courseEntries_[i].semester === courseEntry.semester){
                             courseEntries_[i].entries.push({
                                 name: courseEntry.entries[0].name,
                                 number: courseEntry.entries[0].number,
                                 units: courseEntry.entries[0].units
-                            })
+                            });
                             newEntry = false;
                             break;
                         }
