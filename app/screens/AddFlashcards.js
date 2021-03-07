@@ -1,43 +1,27 @@
-import { useLinkProps } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, View, Button, TextInput } from "react-native";
 
-import { event } from "react-native-reanimated";
-
 export default function Flashcards(props) {
-  const [flashCardGroup, setFlashCardGroup] = React.useState("");
-  const [flashCardQuestion, setFlashCardQuestion] = React.useState("");
-  const [flashCardAnswer, setFlashCardAnswer] = React.useState("");
+  const [flashcardQuestion, setFlashCardQuestion] = React.useState("");
+  const [flashcardAnswer, setFlashCardAnswer] = React.useState("");
 
   function handleSubmit() {
-    if (
-      flashCardGroup != "" &&
-      flashCardQuestion != "" &&
-      flashCardAnswer != ""
-    ) {
-      const flashcard = {
-        groupName: flashCardGroup,
-        question: flashCardQuestion,
-        answer: flashCardAnswer,
+    if (flashcardAnswer != "" && flashcardQuestion != "") {
+      const newFlashcard = {
+        question: flashcardQuestion,
+        answer: flashcardAnswer,
       };
-      props.navigation.navigate("Flashcards", flashcard);
+      props.navigation.navigate("FlashcardSetScreen", newFlashcard);
     }
   }
 
   return (
     <View>
       <View>
-        <Text>FlashCardGroup</Text>
-        <TextInput
-          value={flashCardGroup}
-          onChangeText={(text) => setFlashCardGroup(text)}
-        ></TextInput>
-      </View>
-      <View>
         <Text>Question</Text>
         <TextInput
           multiline={true}
-          value={flashCardQuestion}
+          value={flashcardQuestion}
           onChangeText={(text) => setFlashCardQuestion(text)}
         ></TextInput>
       </View>
@@ -45,10 +29,10 @@ export default function Flashcards(props) {
         <Text>Answer</Text>
         <TextInput
           multiline={true}
-          value={flashCardAnswer}
+          value={flashcardAnswer}
           onChangeText={(text) => setFlashCardAnswer(text)}
         ></TextInput>
-        <Button onPress={handleSubmit} title="Save" />
+        <Button onPress={handleSubmit} title="Save Flash Card" />
       </View>
     </View>
   );
