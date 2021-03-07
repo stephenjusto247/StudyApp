@@ -11,7 +11,7 @@ export default function CoursePlannerScreen( props ){
     const [indexToDelete, setIndexToDelete] = useState(0);
     const [courseEntries, setCourseEntries_] = useState([]);
     const courseEntriesRef = useRef(courseEntries);
-    const setCourseEntries = async (data) => {
+    const setCourseEntries = (data) => {
         courseEntriesRef.current = data;
         setCourseEntries_(data);
     };
