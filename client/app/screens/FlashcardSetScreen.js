@@ -1,43 +1,47 @@
-import React from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
 import colors from '../config/colors.js';
 
 export default function FlashcardsStack(props) {
-  const [test, setTest] = React.useState('l');
-  const [flashcardSet, setFlashcardSet] = React.useState({});
+  const [lastAction, setLastAction] = useState('initial');
+  const [flashcardSet, setFlashcardSet_] = useState({});
+  const flashcardSetRef = useRef(flashcardSet);
+  const setFlashcardSet = (data) => {
+    flashcardSetRef.current = data;
+    setFlashcardSet_(data);
+  }
 
-  React.useEffect(() => {
+  useEffect(() => {
+    //console.log('in effect: ');
+    //console.log(props.route.params);
     if (props.route.params) {
       if (props.route.params.delete){
-        let flashcardSet_ = flashcardSet;
-        console.log('delete----------')
-        console.log(flashcardSet_);
-        console.log(flashcardSet_.flashcards[props.route.params.index]);
-        flashcardSet_.flashcards = [];
-        console.log(flashcardSet_);
-        setFlashcardSet(flashcardSet_);
-        setTest('delete');
-        props.route.params.delete = null;
+        setFlashcardSet({
+          flashcards : flashcardSet.flashcards.filter((flashcard, index) => index !== props.route.params.index),
+          set: flashcardSet.set
+        });
+        setLastAction('delete');
+      }
+      else if (props.route.params.edit){
+        let flashcards_ = flashcardSet.flashcards;
+        flashcards_[props.route.params.index] = {
+          answer: props.route.params.answer,
+          question: props.route.params.question
+        };
+        setFlashcardSet({flashcards: flashcards_, set: flashcardSet.set});
+        setLastAction('edit');
       }
       else{
         const newFlashcard = {
           set: props.route.params.set,
           flashcards: props.route.params.flashcards
         };
-        console.log('pusshing-------')
-        console.log(newFlashcard);
         setFlashcardSet(newFlashcard);
-        setTest('add');
+        setLastAction('add');
       }
     }
   }, [props.route.params]);
-
-  React.useEffect(()=>{
-    console.log('new-------');
-    console.log(test);
-    console.log(flashcardSet);
-  }, [test]);
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.headerSection}>
@@ -46,13 +50,14 @@ export default function FlashcardsStack(props) {
         </Text>
       </View> 
       <ScrollView style={styles.mainSection}>
-      {(flashcardSet.flashcards !== undefined) ? 
-        flashcardSet.flashcards.map((entry, index) =>{
+      {(flashcardSetRef.current.flashcards !== undefined) ? 
+        flashcardSetRef.current.flashcards.map((entry, index) =>{
             return(
               <TouchableOpacity key={index} onPress={()=>
                 props.navigation.navigate('FlashcardEdit', {
                   question: entry.question, 
                   answer: entry.answer,
+                  set: flashcardSet.set,
                   index: index})}
               >
                 <View style={styles.flashcard}>
@@ -72,10 +77,16 @@ export default function FlashcardsStack(props) {
         <TouchableOpacity 
           style={styles.back}
           onPress={() => {
-            props.navigation.navigate("Flashcards", flashcardSet);
+            props.navigation.navigate("Flashcards", {
+              set: flashcardSet.set,
+              flashcards: flashcardSet.flashcards,
+              lastAction: lastAction,
+              deleteSet: false
+            });
           }}
         >
-          <Text style={styles.backText}>Back</Text>
+        {props.route.params.initial ?  <Text style={styles.backText}>Back</Text>
+        : <Text style={styles.backText}>Save</Text>}
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.study}
@@ -88,10 +99,26 @@ export default function FlashcardsStack(props) {
         <TouchableOpacity 
           style={styles.create}
           onPress={() => {
-            props.navigation.navigate("AddFlashcards", flashcardSet);
+            props.navigation.navigate("AddFlashcards", {
+              flashcards: flashcardSet.flashcards,
+              set: flashcardSet.set,
+              deleteSet: false
+            });
           }}
         >
           <Text style={styles.createText}>Create</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.deleteSection}>
+        <TouchableOpacity 
+          style={styles.delete}
+          onPress={() => {
+            props.navigation.navigate('Flashcards', {
+              setIndex: props.route.params.setIndex,
+              deleteSet: true
+          })
+        }}>
+          <Text style={styles.deleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -115,7 +142,7 @@ const styles = StyleSheet.create({
     color: colors.paleSilver
   },
   bottomSection: {
-    flex: .3333,
+    flex: .16665,
     flexDirection: 'row',
     justifyContent: 'space-evenly'
   },
@@ -137,6 +164,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     color: colors.paleSilver
+  },
+  delete:{
+    alignItems: 'center',
+    borderColor: colors.red,
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 45,
+    width: 100
+  },
+  deleteText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: colors.red
+  },
+  deleteSection: {
+    flex: .16665,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
   },
   empty: {
     fontSize: 16,
