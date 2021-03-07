@@ -10,8 +10,6 @@ export default function FlashcardScreen(props) {
   const flashcardSetsRef = useRef(flashcardSets);
   const setFlashcardSets = (data) => {
     flashcardSetsRef.current = data;
-    //console.log('in ref: ');
-    //console.log(data);
     setFlashcardSets_(data);
   }
 
@@ -21,7 +19,6 @@ export default function FlashcardScreen(props) {
 
   useEffect(() => {
     if (props.route.params) {
-      console.log(props.route.params);
       if (props.route.params.deleteSet){
         if (flashcardSets.length > 0){
           setFlashcardSets(flashcardSets.filter((flashcardSet, index) => index !== props.route.params.setIndex));
@@ -35,16 +32,9 @@ export default function FlashcardScreen(props) {
       }
       else if(props.route.params.lastAction === 'edit' || props.route.params.lastAction === 'delete'){
         let flashcardSets_ = [...flashcardSets];
-        //console.log('in edit......');
-        //console.log('new is : ')
-        //console.log(props.route.params.flashcards);
         for (let i = 0; i < flashcardSets_.length; i++){
           if (flashcardSets_[i].set === props.route.params.set){
             flashcardSets_[i].flashcards = props.route.params.flashcards;
-            console.log('so ...');
-            console.log(flashcardSets_[i].flashcards);
-            console.log('and');
-            console.log(flashcardSets_[i]);
             break;
           }
         }

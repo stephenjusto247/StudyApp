@@ -15,8 +15,6 @@ export default function FlashcardsStack(props) {
   }
 
   useEffect(() => {
-    //console.log('in effect: ');
-    //console.log(props.route.params);
     if (props.route.params) {
       if (props.route.params.delete){
         setFlashcardSet({
