@@ -24,6 +24,19 @@ const createFlashcardSetValidation = (data) => {
   return schema.validate(data);
 };
 
+const updateFlashcardSetValidation = (data) => {
+  const schema = Joi.object({
+    setID: Joi.string().required(),
+    name: Joi.string().max(64).required(),
+    flashcards: Joi.array().items(Joi.object({
+      question: Joi.string().max(128).required(),
+      answer: Joi.string().max(128).required(),
+      hint: Joi.string().max(128)
+    }))
+  });
+  return schema.validate(data);
+};
+
 const deleteFlashcardSetValidation = (data) => {
   const schema = Joi.object({
     setID: Joi.string().required() 
@@ -90,6 +103,7 @@ const deleteAccountValidation = (data) => {
 
 module.exports.coursePlannerValidation = coursePlannerValidation;
 module.exports.createFlashcardSetValidation = createFlashcardSetValidation;
+module.exports.updateFlashcardSetValidation = updateFlashcardSetValidation;
 module.exports.deleteFlashcardSetValidation = deleteFlashcardSetValidation;
 module.exports.updateFlashcardValidation = updateFlashcardValidation;
 module.exports.addFlashcardValidation = addFlashcardValidation;

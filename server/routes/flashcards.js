@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const FlashcardSet = require('../models/FlashcardSet');
 const User = require('../models/User');
-const {createFlashcardSetValidation, deleteFlashcardSetValidation,updateFlashcardValidation, deleteFlashcardValidation, addFlashcardValidation } = require('../lib/validation');
+const { createFlashcardSetValidation, updateFlashcardSetValidation, deleteFlashcardSetValidation,updateFlashcardValidation, deleteFlashcardValidation, addFlashcardValidation } = require('../lib/validation');
 const verify = require('../lib/verify');
 
 router.post('/create-set', verify, async (req, res) => {
@@ -31,6 +31,30 @@ router.post('/create-set', verify, async (req, res) => {
     return res.status(500).json({ message: 'Failed to save flashcard set' })
   }
 });
+
+router.post('/update-set', verify, async (req, res) => {
+
+  // Validate request body
+  const {error} = updateFlashcardSetValidation(req.body);
+  if(error) return res.status(400).json({ message: error.details[0].message });
+
+  try{
+
+    // Check if Flashcard set exists
+    const oldFlashcardSet = await FlashcardSet.findOne({_id: req.body.setID})
+    if(!oldFlashcardSet) return res.status(404).json({message: "Flashcards set cannot be found"});
+
+    // Connect flashcard set to user
+    const query = { _id: req.body.setID };
+    const set = { name: req.body.name, flashcards: req.body.flashcards };
+    await FlashcardSet.replaceOne(query, set);
+
+    return res.status(201).json({ message: "Success" });
+  } catch {
+    return res.status(500).json({ message: 'Failed to save flashcard set' })
+  }
+});
+
 
 router.post('/get-set', async (req, res) => {
 
